@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="智锁——远程控制智能锁：5 套实验台架的三维爆炸视图、部件清单与 50,000 元预算结构。">
+<title>智锁 · 远程控制智能锁 — 三维爆炸视图与预算结构</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body id="top">
+
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="bg-glow" aria-hidden="true"></div>
+
+<header class="nav">
+  <a class="brand" href="#top">
+    <svg viewBox="0 0 28 28" width="26" height="26" aria-hidden="true">
+      <rect x="3" y="12" width="22" height="14" rx="3.4" fill="none" stroke="currentColor" stroke-width="1.6"/>
+      <path d="M8.6 12V8.9a5.4 5.4 0 0 1 10.8 0V12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      <circle cx="14" cy="18.4" r="1.9" fill="currentColor"/>
+      <path d="M14 20.3v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+    </svg>
+    <span class="brand-txt">智锁 <em>ZhiSuo</em></span>
+  </a>
+  <nav class="nav-links">
+    <a href="#viewer">爆炸视图</a>
+    <a href="#chain">系统链路</a>
+    <a href="#budget">预算结构</a>
+    <a href="#table">明细表</a>
+    <a href="#risk">风险</a>
+  </nav>
+  <div class="nav-total">
+    <span>预算上限</span>
+    <b>¥50,000</b>
+  </div>
+</header>
+
+<main>
+
+<!-- ============ 01 三维爆炸视图 ============ -->
+<section class="sec sec-viewer" id="viewer">
+  <div class="wrap">
+    <div class="stage-head">
+      <div>
+        <p class="kicker"><i></i>5 套实验台架 · 11 类硬件科目 · 三维装配拆解</p>
+        <h1>把一台门禁台架 <em>拆开</em> 给你看</h1>
+      </div>
+      <div class="stage-head-side">
+        <p class="lede">拖动滑块即可沿安装方向逐层分离 17 个构件；点击任意零件，右侧会显示它在预算书里的编码、数量与价格依据。</p>
+        <ul class="chips">
+          <li><b>17</b><span>可拆解构件</span></li>
+          <li><b>11</b><span>A 类科目</span></li>
+          <li><b>¥9,873</b><span>硬件合计</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="stage">
+      <!-- 左：部件清单 -->
+      <aside class="rail rail-left" id="railLeft">
+        <div class="rail-head">
+          <h2>部件清单</h2>
+          <span class="rail-count" id="railCount">17</span>
+        </div>
+        <div class="rail-scroll" id="partsRail"><!-- JS --></div>
+        <div class="rail-foot">
+          <span class="dot dot-a"></span>点击定位
+          <span class="dot dot-b"></span>双击 ——
+        </div>
+      </aside>
+
+      <!-- 中：三维视口 -->
+      <div class="viewport" id="viewport">
+        <canvas id="scene"></canvas>
+        <div class="labels" id="labels"></div>
+
+        <div class="vp-top">
+          <div class="vp-views">
+            <button class="vbtn is-on" data-view="iso">等轴</button>
+            <button class="vbtn" data-view="front">正面</button>
+            <button class="vbtn" data-view="back">背面</button>
+            <button class="vbtn" data-view="left">左侧</button>
+            <button class="vbtn" data-view="right">右侧</button>
+            <button class="vbtn" data-view="top">俯视</button>
+          </div>
+          <div class="vp-toggles">
+            <button class="tbtn is-on" data-toggle="labels" title="显示零件标注">标注</button>
+            <button class="tbtn" data-toggle="isolate" title="只显示选中零件">隔离</button>
+            <button class="tbtn" data-toggle="rotate" title="自动旋转">旋转</button>
+            <button class="tbtn" data-toggle="reset" title="恢复默认视角">复位</button>
+          </div>
+        </div>
+
+        <div class="vp-bottom">
+          <div class="explode-ctl">
+            <div class="explode-row">
+              <span class="ex-label">装配</span>
+              <input id="explodeRange" type="range" min="0" max="100" value="0" step="1" aria-label="拆解程度">
+              <span class="ex-label">拆解</span>
+              <span class="ex-val" id="explodeVal">0%</span>
+            </div>
+            <div class="explode-btns">
+              <button data-explode="0">合拢</button>
+              <button data-explode="0.55">半拆</button>
+              <button data-explode="1" class="is-primary">全拆解</button>
+              <button data-explode="auto" class="is-ghost">自动播放</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="vp-hint">拖拽旋转 · 滚轮缩放 · 点击零件查看预算依据</div>
+        <div class="vp-loading" id="vpLoading"><i></i>正在装配模型…</div>
+      </div>
+
+      <!-- 右：部件详情 -->
+      <aside class="rail rail-right">
+        <div class="rail-head">
+          <h2>部件档案</h2>
+          <span class="rail-count" id="detailCode">—</span>
+        </div>
+        <div class="rail-scroll" id="detail"><!-- JS --></div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 02 系统链路 ============ -->
+<section class="sec" id="chain">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <h2>一条链路，四段预算</h2>
+      <p>门禁面板、网关、磁力锁与支架构成最小可演示的“管理端—网关—锁控”链路；A 类全部硬件只占预算 19.75%，真正的大头在第三方安全测试。</p>
+    </div>
+
+    <div class="chain-flow" id="chainFlow">
+      <article class="chain-node" style="--c:#6fb2ff">
+        <div class="cn-ico">
+          <svg viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M10.5 18.5h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <h3>管理端 · 微信小程序</h3>
+        <p>预约、授权、远程开门</p>
+        <span class="cn-tag">B01 · 309 元/间</span>
+      </article>
+      <div class="chain-link"><i></i><span>MQTT / HTTPS</span></div>
+      <article class="chain-node" style="--c:#5f9dff">
+        <div class="cn-ico">
+          <svg viewBox="0 0 24 24"><path d="M6.5 17.5a3.8 3.8 0 0 1 .4-7.6 5 5 0 0 1 9.6-1.2 3.6 3.6 0 0 1 1 7.1z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M12 14v6M9.4 17.6 12 20l2.6-2.4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <h3>云平台 · 日志服务</h3>
+        <p>事件留存 180 天</p>
+        <span class="cn-tag">B02 · B03</span>
+      </article>
+      <div class="chain-link"><i></i><span>以太网 / Wi-Fi</span></div>
+      <article class="chain-node" style="--c:#3fd8c0">
+        <div class="cn-ico">
+          <svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="9" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M7 8V5.5M17 8V5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="12.5" r="1.1" fill="currentColor"/><circle cx="12" cy="12.5" r="1.1" fill="currentColor"/></svg>
+        </div>
+        <h3>联网网关</h3>
+        <p>下行指令 · 本地事件上报</p>
+        <span class="cn-tag">A02 · 309 元/台</span>
+      </article>
+      <div class="chain-link"><i></i><span>RS-485 / 韦根</span></div>
+      <article class="chain-node" style="--c:#3fd8c0">
+        <div class="cn-ico">
+          <svg viewBox="0 0 24 24"><rect x="6.5" y="3" width="11" height="18" rx="2.4" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="8" r="2.1" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M9 13h6M9 15.4h6M9 17.8h6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        </div>
+        <h3>门禁面板 MJ03</h3>
+        <p>IC 卡 / 密码认证</p>
+        <span class="cn-tag">A01 · 366 元/套</span>
+      </article>
+      <div class="chain-link"><i></i><span>12 V 断电释放</span></div>
+      <article class="chain-node" style="--c:#f0b35e">
+        <div class="cn-ico">
+          <svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="9.5" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8.5 10V7.2a3.5 3.5 0 0 1 7 0V10" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 14.2v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </div>
+        <h3>磁力锁 DS-K4H258S</h3>
+        <p>通电吸合 · 断电即开</p>
+        <span class="cn-tag">A03 · 187 元/把</span>
+      </article>
+    </div>
+
+    <div class="chain-notes">
+      <div class="cn-note">
+        <h4><span>断电即开</span></h4>
+        <p>磁力锁靠电磁吸合，断电自动释放，符合疏散门“断电开门”的基本要求；但台架只做低压演示，不等于整门禁系统的消防合规认证。</p>
+      </div>
+      <div class="cn-note">
+        <h4><span>两条独立出口</span></h4>
+        <p>软件远程开锁之外，门内侧的 EB29 出门按钮直接切断锁体电源，是独立于平台的应急释放通道 —— 这也是风险表里“硬件独立应急释放优先”的落点。</p>
+      </div>
+      <div class="cn-note">
+        <h4><span>测试范围仅限小程序</span></h4>
+        <p>31,800 元的 I 类渗透测试只对应合同明确界定的普通微信小程序；管理后台、硬件与网关均不在范围内，涉及多角色时可能需要 II 类（53,000 元/次）。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 03 预算结构 ============ -->
+<section class="sec sec-alt" id="budget">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <h2>50,000 元花在哪里</h2>
+      <p>五个科目、55 个子项。硬件只占 19.75%；68.60% 集中在第三方安全测试与安装指导这一项外协服务上。</p>
+    </div>
+
+    <div class="budget-grid">
+      <div class="cat-list" id="catList"><!-- JS --></div>
+
+      <div class="donut-card">
+        <div class="donut-wrap">
+          <div class="donut" id="donut"></div>
+          <div class="donut-hole">
+            <span>预算合计</span>
+            <b>50,000</b>
+            <i>元 · 含税</i>
+          </div>
+        </div>
+        <p class="donut-note">9,873 ＋ 3,045 ＋ 34,300 ＋ 655 ＋ 2,127 ＝ 50,000</p>
+        <div class="donut-legend" id="donutLegend"><!-- JS --></div>
+      </div>
+    </div>
+
+    <div class="week-card">
+      <div class="week-head">
+        <h3>按周经费执行计划</h3>
+        <span>4 周 · 28 天 · 6 人团队</span>
+      </div>
+      <div class="week-list" id="weekList"><!-- JS --></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 04 明细表 ============ -->
+<section class="sec" id="table">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <h2>逐项明细</h2>
+      <p>公开含税价按元上取整；“询价预算价”不是实际成交价。点击行可回到三维视图查看对应零件。</p>
+    </div>
+
+    <div class="tabs">
+      <button class="tab is-on" data-tab="a">A 类 · 硬件设备及实验材料 <i>11 项 / 9,873 元</i></button>
+      <button class="tab" data-tab="b">B–E 类 · 服务与其他 <i>8 项 / 40,127 元</i></button>
+    </div>
+
+    <div class="table-wrap" id="paneA">
+      <table class="tbl">
+        <thead>
+          <tr><th class="c-code">编码</th><th>设备 / 材料</th><th class="c-num">数量</th><th class="c-num">单价</th><th class="c-num">合价</th><th class="c-basis">测算依据</th></tr>
+        </thead>
+        <tbody id="partsTable"><!-- JS --></tbody>
+        <tfoot>
+          <tr><td colspan="4">A 类小计</td><td class="c-num">9,873</td><td>占预算 19.75%</td></tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <div class="table-wrap is-hidden" id="paneB">
+      <table class="tbl">
+        <thead>
+          <tr><th class="c-code">编码</th><th>项目名称</th><th class="c-num">数量</th><th class="c-num">单价</th><th class="c-num">合价</th><th class="c-basis">计价依据</th></tr>
+        </thead>
+        <tbody id="servicesTable"><!-- JS --></tbody>
+        <tfoot>
+          <tr><td colspan="4">B–E 类小计</td><td class="c-num">40,127</td><td>占预算 80.25%</td></tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <div class="src-block">
+      <h3>公开价格来源</h3>
+      <div class="src-list" id="srcList"><!-- JS --></div>
+      <p class="src-foot">网页标价随时间和地区变化，仅证明标价或收费参考，不证明本项目已签约。核查日期：2026 年 10 月 19 日。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 05 风险 ============ -->
+<section class="sec sec-alt" id="risk">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-num">05</span>
+      <h2>四个会改变预算的风险点</h2>
+      <p>变更时：若 I 类小程序测试不适用、供应商无法提供日志服务、不能保证应急出门或经费明显不足，应调整范围、预算或工期，不得用不符合同类品目替代。</p>
+    </div>
+    <div class="risk-grid" id="riskGrid"><!-- JS --></div>
+
+    <div class="concl">
+      <h3>结论与审批建议</h3>
+      <p>本预算以 50,000 元为上限，其中已找到公开价格依据的门禁面板、网关、磁力锁、支架、UPS、IC 卡、物流和指定范围外协服务按网页展示价或区间估算；其余因尺寸、型号或服务范围尚未确定，列为需二次询价的控制性预算。</p>
+      <p class="concl-key">允许进入“供应商询价—1 套样机核验”阶段；待学校批准实验场景、供应商确认功能和测试授权后，再执行后续采购。</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <div>
+      <b>智锁 · 远程控制智能锁</b>
+      <p>机器人工程专业课程项目 / 智能门禁实验原型 · 预算编制日期 2026 年 10 月 19 日</p>
+    </div>
+    <div class="foot-note">
+      <p>文件属性：课程项目拟执行预算。公开标价仅为编制依据，实际采购价格、测试范围和支付条件以供应商正式报价及合同为准。</p>
+      <p>三维模型为依据预算书件号与尺寸重建的示意装配体，非厂商工程图。</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+window.addEventListener('error', (e) => {
+  const s = (e.error && e.error.stack) ? e.error.stack.split('\n').slice(0, 3).join(' | ') : '';
+  document.body.dataset.err = `${e.message} @ ${s}`;
+});
+</script>
+<script src="app.js"></script>
+</body>
+</html>
