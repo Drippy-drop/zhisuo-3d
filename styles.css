@@ -124,8 +124,10 @@ html.static .cat-track i,html.static .wk-track i,html.static .donut{transition:n
 /* 舞台 */
 .stage{
   display:grid;grid-template-columns:284px minmax(0,1fr) 344px;gap:12px;
-  height:clamp(500px,calc(100vh - 246px),860px);
+  height:clamp(700px,calc(100vh - 246px),960px);
 }
+.viewer-center{display:flex;flex-direction:column;gap:10px;min-width:0;min-height:0}
+.viewer-center .viewport{flex:1;min-height:360px}
 .rail{
   display:flex;flex-direction:column;min-height:0;
   background:linear-gradient(180deg,rgba(14,21,27,.92),rgba(9,14,19,.92));
@@ -228,33 +230,50 @@ html.static .cat-track i,html.static .wk-track i,html.static .donut{transition:n
 .vbtn.is-on{color:#04120f;background:var(--accent);border-color:var(--accent);font-weight:600}
 .tbtn.is-on{color:var(--accent);border-color:rgba(63,216,192,.55);background:rgba(63,216,192,.12)}
 
-.vp-bottom{
-  position:absolute;left:0;right:0;bottom:0;z-index:3;
-  padding:12px;pointer-events:none;
-  background:linear-gradient(0deg,rgba(5,8,11,.88),transparent);
+.viewer-controls{display:grid;gap:8px;flex:none;min-width:0}
+.door-ctl,.explode-ctl{
+  padding:11px 13px;border-radius:11px;min-width:0;
+  background:rgba(10,16,21,.92);border:1px solid var(--line);
+  display:flex;flex-direction:column;gap:8px;
 }
-.explode-ctl{
-  pointer-events:auto;padding:9px 12px;border-radius:11px;
-  background:rgba(10,16,21,.82);border:1px solid var(--line);
-  backdrop-filter:blur(14px);box-shadow:0 18px 40px -26px #000;
-  display:flex;align-items:center;gap:14px;
-}
+.door-ctl{border-color:rgba(63,216,192,.22)}
+.control-head{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0}
+.control-head h2{display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:600;white-space:nowrap}
+.control-head>span{font-size:10px;color:var(--dimmer);text-align:right;line-height:1.5}
+.control-dot{width:5px;height:5px;border-radius:50%;background:var(--accent)}
+.control-head .door-status{color:var(--dim)}
+.door-ctl.is-moving .door-status{color:var(--accent)}
+.door-ctl.is-exploded .door-status{color:var(--amber)}
+.door-range-row{display:flex;align-items:center;gap:10px;min-width:0}
+.door-angle{min-width:45px;text-align:right;font:500 14px var(--mono);color:var(--accent)}
+.door-actions{display:flex;gap:6px}
+.door-actions button{flex:1}
+.door-options{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.door-options button{display:inline-flex;align-items:center;gap:6px;padding:3px 0;font-size:11px;color:var(--dimmer)}
+.door-options button i{width:11px;height:11px;border:1px solid var(--dimmer);border-radius:3px;position:relative}
+.door-options button.is-on{color:var(--accent)}
+.door-options button.is-on i{border-color:var(--accent);background:rgba(63,216,192,.16)}
+.door-options button.is-on i::after{content:"";position:absolute;inset:2px;border-radius:1px;background:var(--accent)}
+.door-options>span{margin-left:auto;font:10px var(--mono);color:var(--dimmer)}
+.viewer-controls button:focus-visible,.vp-top button:focus-visible,input[type=range]:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
 .explode-row{display:flex;align-items:center;gap:10px;flex:1;min-width:150px}
 .ex-label{font-size:10.5px;color:var(--dimmer);letter-spacing:.06em;flex:none}
 .ex-val{font-family:var(--mono);font-size:12px;color:var(--accent);width:40px;text-align:right;flex:none}
 .explode-btns{display:flex;gap:6px;flex:none}
-.explode-btns button{
+.explode-btns button{flex:1}
+.explode-btns button,.door-actions button{
   padding:5px 11px;font-size:11.5px;border-radius:7px;
   border:1px solid var(--line);color:var(--dim);background:rgba(255,255,255,.022);
   transition:all .18s;white-space:nowrap;
 }
-.explode-btns button:hover{color:var(--fg);border-color:var(--line-2);background:rgba(255,255,255,.06)}
-.explode-btns button.is-primary{background:var(--accent);color:#04120f;border-color:var(--accent);font-weight:600}
-.explode-btns button.is-primary:hover{background:#54e6d0}
+.explode-btns button:hover,.door-actions button:hover{color:var(--fg);border-color:var(--line-2);background:rgba(255,255,255,.06)}
+.explode-btns button.is-primary,.door-actions button.is-primary{background:var(--accent);color:#04120f;border-color:var(--accent);font-weight:600}
+.explode-btns button.is-primary:hover,.door-actions button.is-primary:hover{background:#54e6d0}
+.door-actions button[aria-pressed=true]{color:var(--accent);border-color:rgba(63,216,192,.55);background:rgba(63,216,192,.12)}
 .explode-btns button.is-ghost{color:var(--accent);border-color:rgba(63,216,192,.3)}
 
 input[type=range]{
-  -webkit-appearance:none;appearance:none;flex:1;height:22px;background:transparent;cursor:pointer;
+  -webkit-appearance:none;appearance:none;flex:1;min-width:0;height:22px;background:transparent;cursor:pointer;
 }
 input[type=range]::-webkit-slider-runnable-track{
   height:4px;border-radius:99px;
@@ -272,7 +291,7 @@ input[type=range]:active::-webkit-slider-thumb{transform:scale(1.14)}
 input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:#fff;border:3px solid var(--accent-d)}
 
 .vp-hint{
-  position:absolute;right:14px;bottom:112px;z-index:2;
+  position:absolute;right:14px;bottom:12px;left:14px;z-index:2;
   font-size:10.5px;color:rgba(154,168,182,.62);letter-spacing:.03em;
   pointer-events:none;text-align:right;
 }
@@ -546,7 +565,8 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
 }
 @media (max-width:1180px){
   .stage{grid-template-columns:minmax(0,1fr);height:auto;gap:10px}
-  .viewport{height:min(66vh,620px);order:-1}
+  .viewer-center{order:-1}
+  .viewer-center .viewport{height:min(66vh,620px);flex:none}
   .explode-ctl{flex-wrap:wrap}
   .explode-btns{width:100%;justify-content:space-between}
   .explode-btns button{flex:1}
@@ -584,7 +604,15 @@ input[type=range]::-moz-range-thumb{width:13px;height:13px;border-radius:50%;bac
   .sec-head .sec-num{grid-row:auto;padding-top:0}
   .sec-head p{grid-column:auto}
   .chips{display:none}
-  .viewport{height:min(72vh,540px)}
+  .viewer-center .viewport{height:min(62vh,540px);min-height:340px}
+  .vp-top{gap:6px;padding:10px;flex-wrap:wrap}
+  .vp-views,.vp-toggles{gap:5px}
+  .vbtn,.tbtn{padding:6px 9px;min-height:34px}
+  .door-actions button,.explode-btns button{min-height:38px;padding:6px 8px}
+  .door-options button{min-height:32px}
+  .control-head{gap:8px}
+  .control-head .door-status{max-width:64%}
+  .vp-hint{font-size:9px;bottom:9px}
   .vp-views .vbtn:nth-child(n+4){display:none}
   .lbl-body{font-size:10px;padding:2px 7px 2px 6px}
   .lbl-body b{font-size:9px}

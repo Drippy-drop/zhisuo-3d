@@ -1,4 +1,23 @@
 (() => {
+  // src/layout.js
+  var LAYOUT = Object.freeze({
+    hingeX: -0.505,
+    hingeZ: 0.09,
+    doorBottom: 0.15,
+    doorWidth: 0.97,
+    doorHeight: 1.98,
+    doorThickness: 0.05,
+    doorCenterZ: 0.025,
+    maxDoorAngle: 105,
+    sillTop: 0.13,
+    headBottom: 2.15
+  });
+  var SERVICE_OFFSET = Object.freeze([0.92, 0.03, 0]);
+  var clampDoorAngle = (angle) => Math.min(
+    LAYOUT.maxDoorAngle,
+    Math.max(0, Number.isFinite(Number(angle)) ? Number(angle) : 0)
+  );
+
   // src/parts.js
   var PARTS = [
     /* ---------- A08 台架结构 ---------- */
@@ -8,7 +27,7 @@
       codeName: "\u5B9E\u9A8C\u95E8\u6846\u3001\u63A7\u5236\u7BB1\u53CA\u5B89\u88C5\u652F\u5EA7",
       name: "\u53F0\u67B6\u5E95\u5EA7\u4E0E\u5B89\u88C5\u652F\u5EA7",
       short: "\u53F0\u67B6\u5E95\u5EA7",
-      spec: "1900\xD71200\xD7100 mm \u94DD\u578B\u6750\u5E95\u677F + 4 \u7EC4\u89D2\u652F\u5EA7",
+      spec: "1900\xD71200\xD7100 mm \u4E3B\u5E95\u677F + \u53F3\u4FA7\u68C0\u4FEE\u7FFC\u53F0\u4E0E\u652F\u5EA7",
       qty: 5,
       unit: "\u7EC4",
       unitPrice: 350,
@@ -56,10 +75,10 @@
       source: "\u52A0\u5DE5\u8BE2\u4EF7\u9884\u7B97\u4EF7 / \u6309\u56FE\u52A0\u5DE5\uFF1B\u987B\u53D6\u5F97\u4E66\u9762\u62A5\u4EF7",
       icon: "door",
       rgb: "#8b93a0",
-      desc: "\u9762\u5411\u6F14\u793A\u7684\u94A2\u8D28\u95E8\u6247\uFF0C\u5DE6\u4FA7\u95E8\u8F74\u56FA\u5B9A\u4E8E\u7ACB\u6846\uFF0C\u53F3\u4FA7\u5B89\u88C5\u78C1\u529B\u9501\u5438\u9644\u677F\u4E0E\u95E8\u78C1\u78C1\u4F53\u3002\u62C6\u89E3\u52A8\u753B\u4E2D\u95E8\u6247\u5F00\u542F\u5E76\u524D\u79FB\uFF0C\u9732\u51FA\u9501\u4F53\u4E0E\u8D70\u7EBF\u3002",
-      origin: [-0.485, 0.115, 0.025],
+      desc: "\u5DE6\u4FA7\u5916\u7F6E\u95E8\u8F74\uFF0C\u5411\u6B63\u9762\u5F00\u542F 0\u2013105\xB0\uFF1B\u95E8\u5E95\u8DDD\u95E8\u69DB 20 mm\uFF0C\u95E8\u6247\u4E0D\u626B\u8FC7\u80CC\u9762\u7684\u63A7\u5236\u7BB1\u4E0E\u7EBF\u69FD\u3002\u5438\u9644\u677F\u548C\u65E0\u6E90\u95E8\u78C1\u968F\u95E8\u65CB\u8F6C\u3002\u5F00\u5173\u95E8\u4E0E\u88C5\u914D\u62C6\u89E3\u53EF\u5206\u522B\u64CD\u4F5C\u3002",
+      origin: [-0.505, 0.15, 0.09],
       anchor: [0.3, 1.62, 0.032],
-      spin: [0, 0.4, 0],
+      spin: [0, -0.4, 0],
       explode: [-1.529, 0.055, 0.3],
       delay: 0.12
     },
@@ -69,7 +88,7 @@
       codeName: "\u5B9E\u9A8C\u95E8\u6846\u3001\u63A7\u5236\u7BB1\u53CA\u5B89\u88C5\u652F\u5EA7",
       name: "\u63A7\u5236\u7BB1\uFF08\u542B\u53EF\u62C6\u7BB1\u76D6\uFF09",
       short: "\u63A7\u5236\u7BB1",
-      spec: "500\xD7400\xD7240 mm \u91D1\u5C5E\u63A7\u5236\u7BB1\uFF0C\u524D\u7F6E\u53EF\u62C6\u76D6\u677F",
+      spec: "500\xD7400\xD7240 mm \u91D1\u5C5E\u63A7\u5236\u7BB1\uFF0C\u53F3\u4FA7\u72EC\u7ACB\u68C0\u4FEE\u4F4D",
       qty: 5,
       unit: "\u7EC4",
       unitPrice: 350,
@@ -77,9 +96,10 @@
       source: "\u52A0\u5DE5\u8BE2\u4EF7\u9884\u7B97\u4EF7 / \u6309\u56FE\u52A0\u5DE5\uFF1B\u987B\u53D6\u5F97\u4E66\u9762\u62A5\u4EF7",
       icon: "box",
       rgb: "#a7b4c2",
-      desc: "\u5185\u7F6E 12V \u95E8\u7981\u7535\u6E90\u3001\u63A5\u7EBF\u7AEF\u5B50\u3001\u4FDD\u9669\u4E0E\u62A5\u8B66\u63A5\u70B9\u7684\u91D1\u5C5E\u7BB1\u4F53\u3002\u62C6\u89E3\u65F6\u7BB1\u76D6\u6CBF\u5B89\u88C5\u65B9\u5411\u98DE\u51FA\uFF0C\u9732\u51FA\u5185\u90E8\u4F9B\u7535\u4E0E\u63A5\u7EBF\u3002",
-      origin: [0, 0.3, -0.28],
-      anchor: [0.25, 0.5, -0.28],
+      desc: "\u63A7\u5236\u7BB1\u79FB\u81F3\u53F3\u7ACB\u6846\u5916\u7684\u68C0\u4FEE\u7FFC\u53F0\uFF0C\u95E8\u6D1E\u4E0B\u65B9\u7559\u7A7A\u3002\u5185\u7F6E 12V \u7535\u6E90\u3001\u7AEF\u5B50\u4E0E\u62A5\u8B66\u63A5\u70B9\uFF0C\u80CC\u677F\u62A4\u5957\u63A5\u5165\u56FA\u5B9A\u7EBF\u69FD\uFF1B\u7BB1\u76D6\u53EF\u5355\u72EC\u62C6\u5F00\u67E5\u770B\u5185\u90E8\u8FDE\u63A5\u3002",
+      mountOffset: SERVICE_OFFSET,
+      origin: [0.92, 0.33, -0.28],
+      anchor: [1.17, 0.53, -0.28],
       explode: [1.346, -0.06, 0],
       delay: 0.08
     },
@@ -98,9 +118,9 @@
       source: "\u516C\u5F00\u96F6\u552E\u6807\u4EF7 / R2\uFF1A187\u5143/\u628A",
       icon: "lock",
       rgb: "#e0a13c",
-      desc: "\u65AD\u7535\u5373\u91CA\u653E\u7684\u7535\u78C1\u9501\uFF0C\u662F\u201C\u65AD\u7535\u5F00\u95E8\u201D\u6D88\u9632\u903B\u8F91\u7684\u6267\u884C\u7AEF\u3002\u4E0E\u5438\u9644\u677F\u4E4B\u95F4\u4FDD\u6301\u7EA6 2 mm \u6C14\u9699\uFF0C\u901A\u7535\u65F6\u9760\u78C1\u529B\u5438\u5408\u3002R2 \u5929\u9038\u5546\u57CE\u5217\u8868\u5C55\u793A\u4EF7 187 \u5143/\u628A\u3002",
-      origin: [0, 2.075, -0.019],
-      anchor: [0.115, 2.075, -4e-3],
+      desc: "\u56FA\u5B9A\u5728\u95E8\u6846\u80CC\u4FA7\u7684\u7535\u78C1\u9501\uFF0C\u4E0E\u95E8\u4E0A\u8854\u94C1\u5BF9\u9F50\uFF1B\u6A21\u578B\u4FDD\u7559 1 mm \u793A\u610F\u95F4\u8DDD\u4EE5\u5448\u73B0\u5B89\u88C5\u5173\u7CFB\uFF0C\u5B9E\u9645\u5438\u5408\u9700\u6309\u5382\u5BB6\u8981\u6C42\u8D34\u5408\u3002\u672C\u9875\u7684\u5F00\u5173\u95E8\u52A8\u4F5C\u8868\u793A\u91CA\u653E\u540E\u7684\u673A\u68B0\u8FD0\u52A8\u3002R2 \u5217\u8868\u5C55\u793A\u4EF7 187 \u5143/\u628A\u3002",
+      origin: [0, 2.075, -0.032],
+      anchor: [0.115, 2.075, -0.015],
       explode: [0.591, 0.685, 0.22],
       delay: 0.18
     },
@@ -119,8 +139,8 @@
       icon: "plate",
       rgb: "#c9d3de",
       desc: "\u56FA\u5B9A\u5728\u95E8\u6247\u5185\u4FA7\u7684\u8854\u94C1\u677F\uFF0C\u4E0E\u9501\u4F53\u5438\u5408\u9762\u76F8\u5BF9\u3002\u95E8\u6247\u5F00\u542F\u65F6\u968F\u95E8\u6247\u4E00\u8D77\u8F6C\u51FA\uFF0C\u662F\u5224\u65AD\u201C\u9501\u4F53\u2014\u95E8\u6247\u201D\u88C5\u914D\u5173\u7CFB\u7684\u5B9A\u4F4D\u4EF6\u3002",
-      origin: [0, 2.058, -0.031],
-      anchor: [0, 2.058, -0.038],
+      origin: [0, 2.075, -8e-3],
+      anchor: [0, 2.075, -0.014],
       parent: "door",
       explode: [0.05, 0.12, -0.32],
       delay: 0.22
@@ -201,9 +221,9 @@
       source: "\u8BE2\u4EF7\u9884\u7B97\u4EF7 / R10\uFF1A\u51FA\u95E8\u6309\u94AE15\u5143/\u4E2A\uFF1B\u5176\u4F59\u9700\u8BE2\u4EF7",
       icon: "sensor",
       rgb: "#8fd3a8",
-      desc: "\u76D1\u6D4B\u95E8\u6247\u5F00\u5408\u72B6\u6001\uFF0C\u4E3A\u201C\u95E8\u672A\u5173\u4E25\u201D\u544A\u8B66\u4E0E\u65E5\u5FD7\u63D0\u4F9B\u4FE1\u53F7\u3002\u4E24\u7EC4\u89E6\u70B9\u5206\u522B\u56FA\u5B9A\u5728\u95E8\u5934\u4E0E\u95E8\u6247\u4E0A\uFF0C\u5F00\u542F\u65F6\u78C1\u4F53\u5206\u79BB\u3001\u5E72\u7C27\u7BA1\u65AD\u5F00\u3002",
-      origin: [0.4, 2.128, -0.055],
-      anchor: [0.4, 2.152, -0.055],
+      desc: "\u767D\u8272\u6709\u7EBF\u7C27\u7247\u56FA\u5B9A\u5728\u95E8\u5934\uFF0C\u9ED1\u8272\u65E0\u6E90\u78C1\u4F53\u56FA\u5B9A\u5728\u95E8\u6247\u3002\u5F00\u95E8\u65F6\u4E24\u8005\u5206\u79BB\uFF0C\u53EA\u6709\u56FA\u5B9A\u7C27\u7247\u63A5\u7EBF\uFF0C\u907F\u514D\u8DE8\u95E8\u7EBF\u675F\u88AB\u5939\u6216\u62C9\u626F\u3002",
+      origin: [0.4, 2.155, 0.081],
+      anchor: [0.4, 2.167, 0.091],
       explode: [-0.976, 0.498, 0.1],
       delay: 0.24
     },
@@ -221,9 +241,9 @@
       source: "\u653F\u5E9C\u91C7\u8D2D\u7535\u5546\u5C55\u793A\u4EF7 / R10\uFF1A15\u5143/\u4E2A\uFF1B\u5176\u4F59\u5F85\u8BE2\u4EF7",
       icon: "button",
       rgb: "#6ee7a5",
-      desc: "\u95E8\u5185\u4FA7\u7684\u673A\u68B0\u51FA\u95E8\u6309\u94AE\uFF0C\u76F4\u63A5\u5207\u65AD\u9501\u4F53\u7535\u6E90\uFF0C\u662F\u72EC\u7ACB\u4E8E\u8F6F\u4EF6\u7CFB\u7EDF\u7684\u5E94\u6025\u91CA\u653E\u901A\u9053\u3002R10 \u516C\u5F00\u5C55\u793A\u4EF7 15 \u5143/\u4E2A\uFF0C\u542B\u5728 140 \u5143/\u7EC4\u7684\u7EC4\u5408\u9884\u7B97\u5185\u3002",
-      origin: [0.484, 1.3, 5e-3],
-      anchor: [0.472, 1.3, 5e-3],
+      desc: "\u5B89\u88C5\u5728\u53F3\u7ACB\u6846\u80CC\u9762\u7684\u673A\u68B0\u51FA\u95E8\u6309\u94AE\uFF0C\u6B63\u9762\u671D\u5411\u5BA4\u5185\uFF1B\u6309\u94AE\u4E0E\u76D2\u4F53\u4E0D\u4F38\u5165\u95E8\u6247\u901A\u9053\uFF0C\u63A5\u7EBF\u6CBF\u56FA\u5B9A\u6846\u540E\u4FA7\u7EBF\u69FD\u5F15\u51FA\u3002R10 \u516C\u5F00\u5C55\u793A\u4EF7 15 \u5143/\u4E2A\uFF0C\u542B\u5728 140 \u5143/\u7EC4\u7684\u7EC4\u5408\u9884\u7B97\u5185\u3002",
+      origin: [0.55, 1.3, -0.08],
+      anchor: [0.55, 1.3, -0.119],
       explode: [0.384, 0.56, 0.02],
       delay: 0.28
     },
@@ -242,8 +262,9 @@
       icon: "terminal",
       rgb: "#f0b35e",
       desc: "\u628A\u95E8\u78C1\u4E0E\u9501\u72B6\u6001\u4EE5\u5E72\u63A5\u70B9\u5F62\u5F0F\u5F15\u51FA\uFF0C\u4FBF\u4E8E\u63A5\u5165\u6D88\u9632\u8054\u52A8\u6216\u5916\u90E8\u544A\u8B66\u8BBE\u5907\u505A\u6F14\u793A\u3002\u5C5E\u5F85\u8BE2\u4EF7\u9884\u7B97\u9879\u3002",
-      origin: [0.15, 0.443, -0.156],
-      anchor: [0.15, 0.462, -0.156],
+      mountOffset: SERVICE_OFFSET,
+      origin: [1.07, 0.47, -0.24],
+      anchor: [1.07, 0.49, -0.21],
       explode: [0.997, 0.308, -0.4],
       delay: 0.3
     },
@@ -263,8 +284,9 @@
       icon: "psu",
       rgb: "#e2705f",
       desc: "\u4E3A\u9501\u4F53\u4E0E\u9762\u677F\u63D0\u4F9B 12V \u76F4\u6D41\u7535\u6E90\uFF0C\u5185\u7F6E\u7AEF\u5B50\u6392\u4E0E\u4FDD\u9669\u4FDD\u62A4\u3002R11 \u653F\u5E9C\u91C7\u8D2D\u7535\u5546\u5C55\u793A\u4EF7 120 \u5143/\u4E2A\uFF0C\u6BCF\u7EC4\u53E6\u6309 30 \u5143\u4F30\u7B97\u4FDD\u62A4\u4EF6\uFF1B\u4E0B\u5355\u524D\u6838\u9A8C\u603B\u529F\u7387\u4E0E\u5B89\u89C4\u8BC1\u636E\u3002",
-      origin: [-0.05, 0.3, -0.345],
-      anchor: [-0.05, 0.415, -0.3],
+      mountOffset: SERVICE_OFFSET,
+      origin: [0.87, 0.33, -0.345],
+      anchor: [0.87, 0.445, -0.3],
       explode: [0.913, 1, -0.6],
       delay: 0.1
     },
@@ -303,9 +325,9 @@
       source: "\u6750\u6599\u8BE2\u4EF7\u9884\u7B97\u4EF7 / \u4F9D\u636E\u6BCF\u53F0\u67B6\u4F4E\u538B\u5E03\u7EBF\u6E05\u5355\u6D4B\u7B97",
       icon: "cable",
       rgb: "#5f7c99",
-      desc: "\u5305\u542B\u7AEF\u5B50\u3001\u7EBF\u69FD\u3001\u7F16\u53F7\u6807\u7B7E\u548C\u4F4E\u538B\u7EBF\u6750\uFF0C\u6309\u6BCF\u53F0\u67B6\u4F4E\u538B\u5E03\u7EBF\u6E05\u5355\u6D4B\u7B97 120 \u5143/\u7EC4\u3002\u8D70\u7EBF\u8DEF\u5F84\u51B3\u5B9A\u4E86\u201C\u7535\u6E90\u2014\u9501\u2014\u9762\u677F\u2014\u7F51\u5173\u201D\u7684\u7269\u7406\u5173\u7CFB\u3002",
+      desc: "\u7EA2\u8272\u4E3A 12V \u6B63\u6781\uFF0C\u9ED1\u8272\u4E3A\u56DE\u8DEF\u4E0E UPS \u8F93\u5165\u7EBF\uFF0C\u84DD\u8272\u4E3A\u4FE1\u53F7\u7EBF\u3002\u7EBF\u8DEF\u6CBF\u95E8\u6846\u80CC\u9762\u548C\u5E95\u5EA7\u540E\u6CBF\u56FA\u5B9A\uFF1B\u9762\u677F\u7A7F\u6846\u77ED\u63A5\uFF0C\u9501\u7EBF\u63A5\u5DE6\u7AEF\u80F6\u5957\uFF0C\u95E8\u4E0A\u4EC5\u4FDD\u7559\u65E0\u6E90\u6784\u4EF6\uFF0C\u6CA1\u6709\u8DE8\u95E8\u60AC\u7EBF\u3002",
       origin: [0, 0, 0],
-      anchor: [0.55, 1.72, 0.088],
+      anchor: [0.55, 1.72, -0.13],
       explode: [0.098, 0.235, 0.13],
       delay: 0.06
     },
@@ -415,7 +437,7 @@
     { id: "R11", name: "\u9A7B\u9A6C\u5E97\u653F\u5E9C\u91C7\u8D2D\u7535\u5546 \u6D77\u5EB7\u95E8\u7981\u7535\u6E90\u5C55\u793A\u4EF7", url: "https://zmdby.zmddzsc.cn/productInfo/2184218.html", price: "120 \u5143/\u4E2A" }
   ];
 
-  // node_modules/.pnpm/three@0.186.1/node_modules/three/build/three.core.js
+  // node_modules/three/build/three.core.js
   var REVISION = "186";
   var MOUSE = { LEFT: 0, MIDDLE: 1, RIGHT: 2, ROTATE: 0, DOLLY: 1, PAN: 2 };
   var TOUCH = { ROTATE: 0, PAN: 1, DOLLY_PAN: 2, DOLLY_ROTATE: 3 };
@@ -15180,6 +15202,149 @@
     QuadraticBezierCurve3,
     SplineCurve
   });
+  var CurvePath = class extends Curve {
+    /**
+     * Constructs a new curve path.
+     */
+    constructor() {
+      super();
+      this.type = "CurvePath";
+      this.curves = [];
+      this.autoClose = false;
+    }
+    /**
+     * Adds a curve to this curve path.
+     *
+     * @param {Curve} curve - The curve to add.
+     */
+    add(curve) {
+      this.curves.push(curve);
+    }
+    /**
+     * Adds a line curve to close the path.
+     *
+     * @return {CurvePath} A reference to this curve path.
+     */
+    closePath() {
+      const startPoint = this.curves[0].getPoint(0);
+      const endPoint = this.curves[this.curves.length - 1].getPoint(1);
+      if (!startPoint.equals(endPoint)) {
+        const lineType = startPoint.isVector2 === true ? "LineCurve" : "LineCurve3";
+        this.curves.push(new Curves[lineType](endPoint, startPoint));
+      }
+      return this;
+    }
+    /**
+     * This method returns a vector in 2D or 3D space (depending on the curve definitions)
+     * for the given interpolation factor.
+     *
+     * @param {number} t - A interpolation factor representing a position on the curve. Must be in the range `[0,1]`.
+     * @param {(Vector2|Vector3)} [optionalTarget] - The optional target vector the result is written to.
+     * @return {?(Vector2|Vector3)} The position on the curve. It can be a 2D or 3D vector depending on the curve definition.
+     */
+    getPoint(t, optionalTarget) {
+      const d = t * this.getLength();
+      const curveLengths = this.getCurveLengths();
+      let i = 0;
+      while (i < curveLengths.length) {
+        if (curveLengths[i] >= d) {
+          const diff = curveLengths[i] - d;
+          const curve = this.curves[i];
+          const segmentLength = curve.getLength();
+          const u = segmentLength === 0 ? 0 : 1 - diff / segmentLength;
+          return curve.getPointAt(u, optionalTarget);
+        }
+        i++;
+      }
+      return null;
+    }
+    getLength() {
+      const lens = this.getCurveLengths();
+      return lens[lens.length - 1];
+    }
+    updateArcLengths() {
+      this.needsUpdate = true;
+      this.cacheLengths = null;
+      this.getCurveLengths();
+    }
+    /**
+     * Returns list of cumulative curve lengths of the defined curves.
+     *
+     * @return {Array<number>} The curve lengths.
+     */
+    getCurveLengths() {
+      if (this.cacheLengths && this.cacheLengths.length === this.curves.length) {
+        return this.cacheLengths;
+      }
+      const lengths = [];
+      let sums = 0;
+      for (let i = 0, l = this.curves.length; i < l; i++) {
+        sums += this.curves[i].getLength();
+        lengths.push(sums);
+      }
+      this.cacheLengths = lengths;
+      return lengths;
+    }
+    getSpacedPoints(divisions = 40) {
+      const points = [];
+      for (let i = 0; i <= divisions; i++) {
+        points.push(this.getPoint(i / divisions));
+      }
+      if (this.autoClose) {
+        points.push(points[0]);
+      }
+      return points;
+    }
+    getPoints(divisions = 12) {
+      const points = [];
+      let last;
+      for (let i = 0, curves = this.curves; i < curves.length; i++) {
+        const curve = curves[i];
+        const resolution = curve.isEllipseCurve ? divisions * 2 : curve.isLineCurve || curve.isLineCurve3 ? 1 : curve.isSplineCurve ? divisions * curve.points.length : divisions;
+        const pts = curve.getPoints(resolution);
+        for (let j = 0; j < pts.length; j++) {
+          const point = pts[j];
+          if (last && last.equals(point)) continue;
+          points.push(point);
+          last = point;
+        }
+      }
+      if (this.autoClose && points.length > 1 && !points[points.length - 1].equals(points[0])) {
+        points.push(points[0]);
+      }
+      return points;
+    }
+    copy(source) {
+      super.copy(source);
+      this.curves = [];
+      for (let i = 0, l = source.curves.length; i < l; i++) {
+        const curve = source.curves[i];
+        this.curves.push(curve.clone());
+      }
+      this.autoClose = source.autoClose;
+      return this;
+    }
+    toJSON() {
+      const data = super.toJSON();
+      data.autoClose = this.autoClose;
+      data.curves = [];
+      for (let i = 0, l = this.curves.length; i < l; i++) {
+        const curve = this.curves[i];
+        data.curves.push(curve.toJSON());
+      }
+      return data;
+    }
+    fromJSON(json) {
+      super.fromJSON(json);
+      this.autoClose = json.autoClose;
+      this.curves = [];
+      for (let i = 0, l = json.curves.length; i < l; i++) {
+        const curve = json.curves[i];
+        this.curves.push(new Curves[curve.type]().fromJSON(curve));
+      }
+      return this;
+    }
+  };
   var PlaneGeometry = class _PlaneGeometry extends BufferGeometry {
     /**
      * Constructs a new plane geometry.
@@ -18133,6 +18298,120 @@
       this.cameras = array;
     }
   };
+  var Timer = class {
+    /**
+     * Constructs a new timer.
+     */
+    constructor() {
+      this._previousTime = 0;
+      this._currentTime = 0;
+      this._startTime = performance.now();
+      this._delta = 0;
+      this._elapsed = 0;
+      this._timescale = 1;
+      this._document = null;
+      this._pageVisibilityHandler = null;
+    }
+    /**
+     * Connect the timer to the given document.Calling this method is not mandatory to
+     * use the timer but enables the usage of the Page Visibility API to avoid large time
+     * delta values.
+     *
+     * @param {Document} document - The document.
+     */
+    connect(document2) {
+      this._document = document2;
+      if (document2.hidden !== void 0) {
+        this._pageVisibilityHandler = handleVisibilityChange.bind(this);
+        document2.addEventListener("visibilitychange", this._pageVisibilityHandler, false);
+      }
+    }
+    /**
+     * Disconnects the timer from the DOM and also disables the usage of the Page Visibility API.
+     */
+    disconnect() {
+      if (this._pageVisibilityHandler !== null) {
+        this._document.removeEventListener("visibilitychange", this._pageVisibilityHandler);
+        this._pageVisibilityHandler = null;
+      }
+      this._document = null;
+    }
+    /**
+     * Returns the time delta in seconds.
+     *
+     * @return {number} The time delta in second.
+     */
+    getDelta() {
+      return this._delta / 1e3;
+    }
+    /**
+     * Returns the elapsed time in seconds.
+     *
+     * @return {number} The elapsed time in second.
+     */
+    getElapsed() {
+      return this._elapsed / 1e3;
+    }
+    /**
+     * Returns the timescale.
+     *
+     * @return {number} The timescale.
+     */
+    getTimescale() {
+      return this._timescale;
+    }
+    /**
+     * Sets the given timescale which scale the time delta computation
+     * in `update()`.
+     *
+     * @param {number} timescale - The timescale to set.
+     * @return {Timer} A reference to this timer.
+     */
+    setTimescale(timescale) {
+      this._timescale = timescale;
+      return this;
+    }
+    /**
+     * Resets the time computation for the current simulation step.
+     *
+     * @return {Timer} A reference to this timer.
+     */
+    reset() {
+      this._currentTime = performance.now() - this._startTime;
+      return this;
+    }
+    /**
+     * Can be used to free all internal resources. Usually called when
+     * the timer instance isn't required anymore.
+     */
+    dispose() {
+      this.disconnect();
+    }
+    /**
+     * Updates the internal state of the timer. This method should be called
+     * once per simulation step and before you perform queries against the timer
+     * (e.g. via `getDelta()`).
+     *
+     * @param {number} timestamp - The current time in milliseconds. Can be obtained
+     * from the `requestAnimationFrame` callback argument. If not provided, the current
+     * time will be determined with `performance.now`.
+     * @return {Timer} A reference to this timer.
+     */
+    update(timestamp) {
+      if (this._pageVisibilityHandler !== null && this._document.hidden === true) {
+        this._delta = 0;
+      } else {
+        this._previousTime = this._currentTime;
+        this._currentTime = (timestamp !== void 0 ? timestamp : performance.now()) - this._startTime;
+        this._delta = (this._currentTime - this._previousTime) * this._timescale;
+        this._elapsed += this._delta;
+      }
+      return this;
+    }
+  };
+  function handleVisibilityChange() {
+    if (this._document.hidden === false) this.reset();
+  }
   var _RESERVED_CHARS_RE = "\\[\\]\\.:\\/";
   var _reservedRe = new RegExp("[" + _RESERVED_CHARS_RE + "]", "g");
   var _wordChar = "[^" + _RESERVED_CHARS_RE + "]";
@@ -18702,69 +18981,6 @@
       }
     }
   }
-  var Clock = class {
-    /**
-     * Constructs a new clock.
-     *
-     * @deprecated since 183.
-     * @param {boolean} [autoStart=true] - Whether to automatically start the clock when
-     * `getDelta()` is called for the first time.
-     */
-    constructor(autoStart = true) {
-      this.autoStart = autoStart;
-      this.startTime = 0;
-      this.oldTime = 0;
-      this.elapsedTime = 0;
-      this.running = false;
-      warn("Clock: This module has been deprecated. Please use THREE.Timer instead.");
-    }
-    /**
-     * Starts the clock. When `autoStart` is set to `true`, the method is automatically
-     * called by the class.
-     */
-    start() {
-      this.startTime = performance.now();
-      this.oldTime = this.startTime;
-      this.elapsedTime = 0;
-      this.running = true;
-    }
-    /**
-     * Stops the clock.
-     */
-    stop() {
-      this.getElapsedTime();
-      this.running = false;
-      this.autoStart = false;
-    }
-    /**
-     * Returns the elapsed time in seconds.
-     *
-     * @return {number} The elapsed time.
-     */
-    getElapsedTime() {
-      this.getDelta();
-      return this.elapsedTime;
-    }
-    /**
-     * Returns the delta time in seconds.
-     *
-     * @return {number} The delta time.
-     */
-    getDelta() {
-      let diff = 0;
-      if (this.autoStart && !this.running) {
-        this.start();
-        return 0;
-      }
-      if (this.running) {
-        const newTime = performance.now();
-        diff = (newTime - this.oldTime) / 1e3;
-        this.oldTime = newTime;
-        this.elapsedTime += diff;
-      }
-      return diff;
-    }
-  };
   var Spherical = class {
     /**
      * Constructs a new spherical.
@@ -19095,7 +19311,7 @@
     }
   }
 
-  // node_modules/.pnpm/three@0.186.1/node_modules/three/build/three.module.js
+  // node_modules/three/build/three.module.js
   function WebGLAnimation() {
     let context = null;
     let isAnimating = false;
@@ -30593,7 +30809,7 @@ void main() {
     }
   };
 
-  // node_modules/.pnpm/three@0.186.1/node_modules/three/examples/jsm/controls/OrbitControls.js
+  // node_modules/three/examples/jsm/controls/OrbitControls.js
   var _changeEvent = { type: "change" };
   var _startEvent = { type: "start" };
   var _endEvent = { type: "end" };
@@ -31509,7 +31725,7 @@ void main() {
     }
   }
 
-  // node_modules/.pnpm/three@0.186.1/node_modules/three/examples/jsm/renderers/CSS2DRenderer.js
+  // node_modules/three/examples/jsm/renderers/CSS2DRenderer.js
   var CSS2DObject = class extends Object3D {
     /**
      * Constructs a new CSS2D object.
@@ -31654,7 +31870,7 @@ void main() {
     }
   };
 
-  // node_modules/.pnpm/three@0.186.1/node_modules/three/examples/jsm/environments/RoomEnvironment.js
+  // node_modules/three/examples/jsm/environments/RoomEnvironment.js
   var RoomEnvironment = class extends Scene {
     constructor() {
       super();
@@ -31755,7 +31971,7 @@ void main() {
     return material;
   }
 
-  // node_modules/.pnpm/three@0.186.1/node_modules/three/examples/jsm/geometries/RoundedBoxGeometry.js
+  // node_modules/three/examples/jsm/geometries/RoundedBoxGeometry.js
   var _tempNormal = new Vector3();
   function getUv(faceDirVector, normal, uvAxis, projectionAxis, radius, sideLength) {
     const totArcLength = 2 * Math.PI * radius / 4;
@@ -31910,6 +32126,7 @@ void main() {
     chip: std({ color: 14200906, metalness: 1, roughness: 0.28 }),
     wireRed: std({ color: 10234410, metalness: 0.1, roughness: 0.62 }),
     wireBlack: std({ color: 1777186, metalness: 0.1, roughness: 0.66 }),
+    wireSignal: std({ color: 3771560, metalness: 0.08, roughness: 0.58 }),
     trunk: std({ color: 15001836, metalness: 0.05, roughness: 0.55 }),
     screen: std({ color: 660504, metalness: 0.3, roughness: 0.08, emissive: 736058, emissiveIntensity: 0.55 }),
     btnGreen: std({ color: 3120739, metalness: 0.08, roughness: 0.38 }),
@@ -31928,27 +32145,36 @@ void main() {
   var FR_D = 0.14;
   var UP_X = OP_W / 2 + FR_W / 2;
   var HEAD_Y = FLOOR + OP_H + FR_W / 2;
-  var DOOR_W = 0.97;
-  var DOOR_H = 1.98;
-  var DOOR_T = 0.05;
-  var DOOR_Z = 0.025;
-  var HINGE_X = -(OP_W / 2 - 0.015);
-  var DOOR_Y0 = FLOOR + 0.015;
-  var DOOR_AJAR = 0.3;
+  var DOOR_W = LAYOUT.doorWidth;
+  var DOOR_H = LAYOUT.doorHeight;
+  var DOOR_T = LAYOUT.doorThickness;
+  var DOOR_Z = LAYOUT.doorCenterZ;
+  var HINGE_X = LAYOUT.hingeX;
+  var HINGE_Z = LAYOUT.hingeZ;
+  var DOOR_Y0 = LAYOUT.doorBottom;
   var bx = (w, h, d) => new BoxGeometry(w, h, d);
   var cyl = (r, h, seg = 20) => new CylinderGeometry(r, r, h, seg);
   var rbx = (w, h, d, r = 4e-3) => {
     const rr = Math.min(r, Math.min(w, h, d) * 0.44);
     return new RoundedBoxGeometry(w, h, d, 2, Math.max(rr, 4e-4));
   };
-  function tubeGeo(points, radius, radialSeg = 7) {
-    const curve = new CatmullRomCurve3(
-      points.map((p) => new Vector3(p[0], p[1], p[2])),
-      false,
-      "catmullrom",
-      0.15
-    );
-    return new TubeGeometry(curve, 80, radius, radialSeg, false);
+  function tubeGeo(points, radius, radialSeg = 8) {
+    const ps = points.map((p) => new Vector3(...p));
+    const curve = new CurvePath();
+    let previous = ps[0];
+    for (let i = 1; i < ps.length - 1; i++) {
+      const corner = ps[i];
+      const reach = Math.min(0.025, corner.distanceTo(ps[i - 1]) * 0.3, corner.distanceTo(ps[i + 1]) * 0.3);
+      const entry = corner.clone().addScaledVector(ps[i - 1].clone().sub(corner).normalize(), reach);
+      const exit = corner.clone().addScaledVector(ps[i + 1].clone().sub(corner).normalize(), reach);
+      curve.add(new LineCurve3(previous, entry));
+      curve.add(new QuadraticBezierCurve3(entry, corner, exit));
+      previous = exit;
+    }
+    curve.add(new LineCurve3(previous, ps.at(-1)));
+    const geometry = new TubeGeometry(curve, Math.max(32, Math.ceil(curve.getLength() / 8e-3)), radius, radialSeg, false);
+    geometry.userData.cable = { radius, points: curve.getSpacedPoints(Math.ceil(curve.getLength() / 2e-3)) };
+    return geometry;
   }
   function textPlane(text, w, h, opts = {}) {
     const { color = "#dfe7ee", size = 96, weight = 700, font = "Arial, Helvetica, sans-serif" } = opts;
@@ -31988,7 +32214,7 @@ void main() {
       );
       const add = (geo, mat, pos = [0, 0, 0], rot = null) => {
         const m = new Mesh(geo, mat);
-        m.position.copy(toLocal(pos));
+        m.position.copy(toLocal(pos.map((value, index) => value + (def.mountOffset?.[index] || 0))));
         if (rot) m.rotation.set(rot[0], rot[1], rot[2]);
         m.castShadow = true;
         m.receiveShadow = true;
@@ -31998,7 +32224,7 @@ void main() {
       };
       const decal = (text, w, h, pos, opts) => {
         const m = textPlane(text, w, h, opts);
-        m.position.copy(toLocal(pos));
+        m.position.copy(toLocal(pos.map((value, index) => value + (def.mountOffset?.[index] || 0))));
         m.userData.partId = def.id;
         g.add(m);
         return m;
@@ -32023,7 +32249,6 @@ void main() {
         def.origin[2] - parentOrigin[2]
       );
       g.position.copy(restPos);
-      if (def.id === "door") g.rotation.y = DOOR_AJAR;
       if (parent) parent.add(g);
       else root.add(g);
       parts.push({
@@ -32038,6 +32263,9 @@ void main() {
       });
       groups[def.id] = g;
     }
+    root.updateMatrixWorld(true);
+    const magnet = groups.sensor.children.find((m) => m.userData.doorMounted);
+    if (magnet) groups.door.attach(magnet);
     root.traverse((o) => {
       if (!o.isMesh || o.userData.partId) return;
       let p = o.parent;
@@ -32049,6 +32277,10 @@ void main() {
   var BUILDERS = {};
   BUILDERS.base = ({ add }) => {
     add(rbx(PL_W, PL_H, PL_D, 0.014), M.boxMetal, [0, PL_H / 2, 0]);
+    add(rbx(0.55, PL_H, 0.55, 0.012), M.boxMetal, [1.075, PL_H / 2, -0.28]);
+    for (const x of [1.02, 1.28]) {
+      for (const z of [-0.47, -0.09]) add(cyl(0.025, 0.026, 16), M.steelDark, [x, 4e-3, z]);
+    }
     for (const z of [-0.46, 0.46]) {
       add(bx(PL_W - 0.06, 8e-3, 0.026), M.aluDark, [0, PL_H - 1e-3, z]);
     }
@@ -32075,7 +32307,7 @@ void main() {
       add(
         bx(0.016, OP_H - 0.06, 0.012),
         M.steelDark,
-        [x - Math.sign(x) * (FR_W / 2 + 4e-3), uy, DOOR_Z + 0.03]
+        [x - Math.sign(x) * (FR_W / 2 + 4e-3), uy, -8e-3]
       );
     }
     add(rbx(OP_W + 2 * FR_W, FR_W, FR_D, 0.01), M.alu, [0, HEAD_Y, 0]);
@@ -32085,15 +32317,26 @@ void main() {
       add(rbx(0.055, 0.055, FR_D + 4e-3, 4e-3), M.steelDark, [x, HEAD_Y - FR_W / 2 - 0.028, 0]);
       add(rbx(FR_W + 6e-3, 0.05, FR_D + 4e-3, 4e-3), M.steelDark, [x, FLOOR + 0.035, 0]);
     }
+    for (const [hingeIndex, y] of [DOOR_Y0 + 0.35, DOOR_Y0 + 1.62].entries()) {
+      const fixedPlate = add(rbx(0.058, 0.1, 0.012, 3e-3), M.steelDark, [-0.55, y, 0.077]);
+      const bridge = add(rbx(0.047, 0.024, 0.012, 2e-3), M.steel, [-0.527, y, HINGE_Z]);
+      const pin = add(cyl(0.012, 0.11, 20), M.steel, [HINGE_X, y, HINGE_Z]);
+      pin.userData.joint = true;
+      for (const mesh of [fixedPlate, bridge, pin]) mesh.userData.hingeIndex = hingeIndex;
+    }
   };
   BUILDERS.door = ({ add }) => {
     const cy = DOOR_Y0 + DOOR_H / 2;
     add(rbx(DOOR_W, DOOR_H, DOOR_T, 7e-3), M.aluDark, [0, cy, DOOR_Z]);
     add(bx(0.8, 1.76, 4e-3), M.steelDark, [0, cy + 0.02, DOOR_Z + DOOR_T / 2 + 5e-4]);
     add(bx(0.8, 1.76, 4e-3), M.steelDark, [0, cy + 0.02, DOOR_Z - DOOR_T / 2 - 5e-4]);
-    for (const y of [DOOR_Y0 + 0.35, DOOR_Y0 + 1.62]) {
-      add(cyl(0.012, 0.085, 16), M.steel, [HINGE_X + 0.01, y, DOOR_Z]);
-      add(rbx(0.05, 0.1, 0.02, 3e-3), M.steelDark, [HINGE_X + 0.03, y, DOOR_Z]);
+    for (const [hingeIndex, y] of [DOOR_Y0 + 0.35, DOOR_Y0 + 1.62].entries()) {
+      const knuckle = add(cyl(0.015, 0.075, 20), M.steel, [HINGE_X, y, HINGE_Z]);
+      knuckle.userData.joint = true;
+      const movingPlate = add(rbx(0.048, 0.075, 0.012, 3e-3), M.steelDark, [-0.461, y, 0.056]);
+      const leaf = add(rbx(0.05, 0.052, 0.012, 2e-3), M.steel, [-0.48, y, 0.074], [0, 0.65, 0]);
+      leaf.userData.joint = true;
+      for (const mesh of [knuckle, movingPlate, leaf]) mesh.userData.hingeIndex = hingeIndex;
     }
     add(cyl(0.026, 0.012, 20), M.steel, [0.415, 1.03, DOOR_Z + DOOR_T / 2 + 6e-3], [Math.PI / 2, 0, 0]);
     add(cyl(0.014, 0.028, 14), M.steel, [0.415, 1.03, DOOR_Z + DOOR_T / 2 + 0.02], [Math.PI / 2, 0, 0]);
@@ -32105,6 +32348,10 @@ void main() {
   BUILDERS.ctrlbox = ({ add, sub }) => {
     const cy = 0.3, cz = -0.28;
     const bw = 0.5, bh = 0.4, bd = 0.24;
+    add(rbx(0.56, 0.012, 0.3, 4e-3), M.alu, [0, 0.086, cz]);
+    for (const x of [-0.18, 0.18]) {
+      for (const z of [cz - 0.09, cz + 0.09]) add(cyl(0.014, 0.014, 16), M.steel, [x, 0.077, z]);
+    }
     add(rbx(bw, bh, 0.012, 4e-3), M.boxMetal, [0, cy, cz - bd / 2]);
     add(rbx(0.012, bh, bd, 4e-3), M.boxMetal, [-bw / 2, cy, cz]);
     add(rbx(0.012, bh, bd, 4e-3), M.boxMetal, [bw / 2, cy, cz]);
@@ -32114,6 +32361,9 @@ void main() {
     add(rbx(0.42, 0.014, 0.02, 2e-3), M.steel, [0, cy - 0.135, cz - 0.085]);
     for (let i = 0; i < 6; i++) {
       add(rbx(0.026, 0.034, 0.026, 3e-3), M.blackMatte, [-0.15 + i * 0.032, cy - 0.178, cz - 0.075]);
+    }
+    for (const [x, y] of [[0.21, 0.3], [0.185, 0.3], [0.11, 0.24], [0.08, 0.26], [-0.17, 0.25], [-0.22, 0.22]]) {
+      add(cyl(9e-3, 0.018, 16), M.rubber, [x, y, -0.414], [Math.PI / 2, 0, 0]);
     }
     const cover = add(rbx(bw + 0.02, bh + 0.02, 0.012, 5e-3), M.alu, [0, cy, cz + bd / 2 + 8e-3]);
     const plate = textPlane("ZHISUO \xB7 CTRL", 0.2, 0.1, { color: "#39434f", size: 66 });
@@ -32159,7 +32409,7 @@ void main() {
     add(rbx(0.1, 0.01, 0.085, 3e-3), M.alu, [gx, gy - 0.057, gz]);
   };
   BUILDERS.lock = ({ add }) => {
-    const ly = 2.075, lz = -0.029;
+    const ly = 2.075, lz = -0.032;
     add(rbx(0.25, 0.056, 0.03, 5e-3), M.magnet, [0, ly, lz]);
     add(bx(0.244, 0.048, 3e-3), M.steel, [0, ly, lz + 0.0155]);
     for (let i = -2; i <= 2; i++) {
@@ -32175,11 +32425,11 @@ void main() {
     add(cyl(8e-3, 0.02, 12), M.rubber, [-0.148, ly, lz], [0, 0, Math.PI / 2]);
   };
   BUILDERS.armature = ({ add }) => {
-    const ay = 2.058, az = -6e-3;
+    const ay = 2.075, az = -8e-3;
     add(rbx(0.19, 0.044, 0.012, 3e-3), M.steel, [0, ay, az]);
-    add(bx(0.196, 0.05, 3e-3), M.rubber, [0, ay, az + 72e-4]);
+    add(bx(0.196, 0.05, 2e-3), M.rubber, [0, ay, -1e-3]);
     for (const x of [-0.078, 0.078]) {
-      add(cyl(38e-4, 8e-3, 12), M.steelDark, [x, ay, az + 0.011], [Math.PI / 2, 0, 0]);
+      add(cyl(38e-4, 8e-3, 12), M.steelDark, [x, ay, 8e-3], [Math.PI / 2, 0, 0]);
     }
     add(bx(0.17, 8e-3, 4e-3), M.rubber, [0, ay - 0.026, az]);
   };
@@ -32193,23 +32443,23 @@ void main() {
     }
   };
   BUILDERS.sensor = ({ add }) => {
-    add(rbx(0.02, 0.052, 0.016, 4e-3), M.white, [0.4, 2.122, -0.055]);
-    add(rbx(0.018, 0.048, 0.014, 4e-3), M.blackMatte, [0.4, 2.122, -0.036]);
-    add(rbx(6e-3, 3e-3, 2e-3, 1e-3), M.ledGreen, [0.4, 2.118, -0.0468]);
-    for (const y of [2.14, 2.104]) {
-      add(cyl(32e-4, 6e-3, 10), M.steel, [0.4, y, -0.061], [Math.PI / 2, 0, 0]);
+    add(rbx(0.05, 0.024, 0.016, 4e-3), M.white, [0.4, 2.155, 0.081]);
+    const magnet = add(rbx(0.045, 0.016, 0.014, 3e-3), M.blackMatte, [0.4, 2.12, 0.059]);
+    magnet.userData.doorMounted = true;
+    for (const x of [0.384, 0.416]) {
+      add(cyl(32e-4, 6e-3, 10), M.steel, [x, 2.155, 0.091], [Math.PI / 2, 0, 0]);
     }
   };
   BUILDERS.button = ({ add }) => {
-    const x = 0.486, y = 1.3, z = 0;
-    add(rbx(0.055, 0.075, 0.055, 4e-3), M.whiteGrey, [x + 4e-3, y, z]);
-    add(cyl(0.043, 0.01, 32), M.white, [x - 2e-3, y, z], [0, 0, Math.PI / 2]);
-    add(cyl(0.033, 0.012, 32), M.whiteGrey, [x - 0.01, y, z], [0, 0, Math.PI / 2]);
-    add(cyl(0.024, 0.014, 32), M.btnGreen, [x - 0.02, y, z], [0, 0, Math.PI / 2]);
-    add(cyl(0.02, 2e-3, 32), M.ledGreen, [x - 0.0275, y, z], [0, 0, Math.PI / 2]);
+    const x = 0.55, y = 1.3, z = -0.08;
+    add(rbx(0.08, 0.095, 0.02, 4e-3), M.whiteGrey, [x, y, z]);
+    add(cyl(0.043, 0.01, 32), M.white, [x, y, z - 0.015], [Math.PI / 2, 0, 0]);
+    add(cyl(0.033, 0.012, 32), M.whiteGrey, [x, y, z - 0.023], [Math.PI / 2, 0, 0]);
+    add(cyl(0.024, 0.014, 32), M.btnGreen, [x, y, z - 0.03], [Math.PI / 2, 0, 0]);
+    add(cyl(0.02, 2e-3, 32), M.ledGreen, [x, y, z - 0.038], [Math.PI / 2, 0, 0]);
   };
   BUILDERS.alarm = ({ add }) => {
-    const x = 0.15, y = 0.512, z = -0.24;
+    const x = 0.15, y = 0.44, z = -0.24;
     add(rbx(0.095, 0.024, 0.042, 4e-3), M.blackMatte, [x, y, z]);
     for (let i = 0; i < 6; i++) {
       add(cyl(45e-4, 6e-3, 12), M.brass, [x - 0.035 + i * 0.014, y + 0.013, z]);
@@ -32248,54 +32498,92 @@ void main() {
       add(bx(2e-3, 8e-3, 0.09), M.steelDark, [x - 0.056, 0.06 + i * 0.018, z]);
     }
     add(cyl(5e-3, 0.09, 10), M.blackMatte, [x, 0.176, z], [0, 0, Math.PI / 2]);
-    add(cyl(6e-3, 0.14, 10), M.wireBlack, [x - 0.03, 6e-3, z + 0.23], [Math.PI / 2, 0, 0]);
   };
   BUILDERS.wiring = ({ add }) => {
-    add(tubeGeo([
-      [0.24, 0.33, -0.26],
-      [0.44, 0.24, -0.2],
-      [0.55, 0.16, -0.075],
-      [0.55, 0.9, -0.082],
-      [0.55, 1.8, -0.082],
-      [0.53, 2.09, -0.075],
-      [0.3, 2.1, -0.062],
-      [0.135, 2.078, -0.04]
-    ], 55e-4), M.wireRed);
-    add(tubeGeo([
-      [0.22, 0.31, -0.245],
-      [0.42, 0.22, -0.19],
-      [0.545, 0.15, -0.068],
-      [0.545, 0.85, -0.072],
-      [0.545, 1.78, -0.072],
-      [0.52, 2.07, -0.066],
-      [0.28, 2.075, -0.056],
-      [0.125, 2.072, -0.036]
-    ], 5e-3), M.wireBlack);
-    add(tubeGeo([
-      [0.55, 1.268, 0.086],
-      [0.55, 1.05, 0.084],
-      [0.55, 0.55, 0.08],
-      [0.55, 0.135, 0.075],
-      [0.44, 0.115, 0.02],
-      [0.3, 0.112, -0.1],
-      [0.235, 0.15, -0.2]
-    ], 48e-4), M.wireBlack);
-    add(tubeGeo([
-      [0.285, 2.29, -0.045],
-      [0.16, 2.24, -0.1],
-      [-0.36, 2.02, -0.1],
-      [-0.55, 1.6, -0.088],
-      [-0.55, 0.6, -0.088],
-      [-0.52, 0.2, -0.1],
-      [-0.3, 0.14, -0.2],
-      [-0.24, 0.2, -0.26]
-    ], 45e-4), M.wireBlack);
-    add(rbx(0.034, 1.05, 0.022, 4e-3), M.trunk, [0.55, 1.02, -0.09]);
-    add(rbx(0.034, 0.55, 0.022, 4e-3), M.trunk, [-0.55, 1.1, -0.09]);
-    add(rbx(0.9, 0.02, 0.034, 4e-3), M.trunk, [0.05, 0.118, -0.115]);
-    for (const y of [0.6, 1.45]) {
-      add(cyl(75e-4, 6e-3, 12), M.rubber, [0.55, y, -0.088], [Math.PI / 2, 0, 0]);
+    const service = (point) => point.map((value, index) => value + SERVICE_OFFSET[index]);
+    const cable = (name, points, radius, material) => {
+      const mesh = add(tubeGeo(points, radius), material);
+      mesh.name = name;
+    };
+    for (const x of [0.55]) {
+      add(rbx(0.036, 1.96, 0.026, 3e-3), M.trunk, [x, 1.16, -0.103]);
+      for (const y of [0.25, 0.65, 1.05, 1.6, 2.05]) {
+        add(rbx(0.047, 0.012, 0.012, 2e-3), M.aluDark, [x, y, -0.126]);
+      }
+      add(cyl(9e-3, 0.012, 16), M.rubber, [x, 0.18, -0.126], [Math.PI / 2, 0, 0]);
     }
+    add(rbx(0.77, 0.032, 0.026, 3e-3), M.trunk, [0.19, 2.2, -0.103]);
+    add(rbx(0.6, 0.026, 0.034, 3e-3), M.trunk, [0.81, 0.143, -0.49]);
+    cable("12V+ \xB7 \u63A7\u5236\u7BB1 \u2192 \u78C1\u529B\u9501", [
+      service([0.015, 0.218, -0.271]),
+      service([0.21, 0.218, -0.271]),
+      service([0.21, 0.3, -0.271]),
+      service([0.21, 0.3, -0.414]),
+      service([0.21, 0.3, -0.49]),
+      [0.55, 0.33, -0.49],
+      [0.55, 0.3, -0.128],
+      [0.55, 2.2, -0.128],
+      [-0.16, 2.2, -0.128],
+      [-0.16, 2.0715, -0.128],
+      [-0.16, 2.0715, -0.032],
+      [-0.148, 2.0715, -0.032]
+    ], 35e-4, M.wireRed);
+    cable("12V\u2212 \xB7 \u63A7\u5236\u7BB1 \u2192 \u78C1\u529B\u9501", [
+      service([-0.011, 0.218, -0.271]),
+      service([-0.011, 0.235, -0.285]),
+      service([0.185, 0.235, -0.285]),
+      service([0.185, 0.3, -0.285]),
+      service([0.185, 0.3, -0.414]),
+      service([0.185, 0.28, -0.505]),
+      [0.565, 0.31, -0.505],
+      [0.565, 0.28, -0.128],
+      [0.565, 2.215, -0.128],
+      [-0.175, 2.215, -0.128],
+      [-0.175, 2.079, -0.128],
+      [-0.175, 2.079, -0.032],
+      [-0.148, 2.079, -0.032]
+    ], 32e-4, M.wireBlack);
+    cable("\u95E8\u7981\u9762\u677F \xB7 \u56FA\u5B9A\u7A7F\u6846", [
+      [0.55, 1.3, 0.071],
+      [0.55, 1.3, 0],
+      [0.55, 1.22, -0.126],
+      [0.55, 0.19, -0.126],
+      [0.55, 0.143, -0.49],
+      [1.03, 0.143, -0.49],
+      service([0.11, 0.24, -0.414])
+    ], 35e-4, M.wireSignal);
+    cable("\u51FA\u95E8\u6309\u94AE \xB7 \u5E38\u5F00\u63A5\u70B9", [
+      [0.55, 1.27, -0.09],
+      [0.575, 1.24, -0.13],
+      [0.575, 0.18, -0.13],
+      [0.575, 0.143, -0.52],
+      [1, 0.143, -0.52],
+      service([0.08, 0.26, -0.414])
+    ], 28e-4, M.wireSignal);
+    cable("\u7F51\u5173 \xB7 \u6570\u636E\u4E0E\u4F9B\u7535", [
+      [0.3, 2.26, -0.041],
+      [0.3, 2.26, -0.128],
+      [0.535, 2.26, -0.128],
+      [0.535, 0.18, -0.128],
+      [0.535, 0.143, -0.49],
+      [0.75, 0.143, -0.49],
+      service([-0.17, 0.25, -0.414])
+    ], 4e-3, M.wireSignal);
+    cable("\u95E8\u78C1\u7C27\u7247 \xB7 \u95E8\u5934\u56FA\u5B9A\u7EBF", [
+      [0.425, 2.155, 0.081],
+      [0.45, 2.18, 0.081],
+      [0.45, 2.2, -0.128],
+      [0.55, 2.2, -0.128]
+    ], 28e-4, M.wireSignal);
+    cable("UPS \u2192 \u7535\u6E90\u8F93\u5165 \xB7 \u540E\u6CBF", [
+      [1.2, 0.13, 0.015],
+      [1.2, 0.13, -0.58],
+      [0.7, 0.13, -0.58],
+      service([-0.22, 0.22, -0.43]),
+      service([-0.22, 0.22, -0.414]),
+      service([-0.22, 0.22, -0.271]),
+      service([-0.115, 0.218, -0.271])
+    ], 5e-3, M.wireBlack);
   };
   BUILDERS.cards = ({ add }) => {
     const n = 5;
@@ -32349,13 +32637,19 @@ void main() {
     return t;
   }
   var Viewer = class {
-    constructor({ canvas, labelHost, onSelect, onHover }) {
+    constructor({ canvas, labelHost, onSelect, onHover, onDoorChange }) {
       this.canvas = canvas;
       this.labelHost = labelHost;
       this.onSelect = onSelect || (() => {
       });
       this.onHover = onHover || (() => {
       });
+      this.onDoorChange = onDoorChange || (() => {
+      });
+      this.doorAngle = 0;
+      this.doorTarget = 0;
+      this.envelopeOn = false;
+      this.wiringVisible = true;
       this.selectedId = null;
       this.hoverId = null;
       this.explode = 0;
@@ -32370,11 +32664,13 @@ void main() {
       this._initRenderer();
       this._initScene();
       this._initAssembly();
+      this._initMotionEnvelope();
       this._initLabels();
       this._initLeaders();
       this._initEvents();
       this.resize();
-      this.clock = new Clock();
+      this.clock = new Timer();
+      this.clock.connect(document);
       this._loop = this._loop.bind(this);
       this._raf = requestAnimationFrame(this._loop);
     }
@@ -32391,7 +32687,7 @@ void main() {
       r.toneMapping = ACESFilmicToneMapping;
       r.toneMappingExposure = 1.02;
       r.shadowMap.enabled = true;
-      r.shadowMap.type = PCFSoftShadowMap;
+      r.shadowMap.type = PCFShadowMap;
       this.renderer = r;
       this.labelRenderer = new CSS2DRenderer({ element: this.labelHost });
       this.labelRenderer.domElement.style.position = "absolute";
@@ -32484,6 +32780,54 @@ void main() {
         root.updateMatrixWorld(true);
         this.restWorld.set(p.def.id, p.group.getWorldPosition(new Vector3()));
       }
+      this.assemblySweepBox = new Box3().setFromObject(root);
+      const doorBox = new Box3().setFromObject(this.partMap.get("door").group);
+      for (let corner = 0; corner < 8; corner++) {
+        const x = (corner & 1 ? doorBox.max.x : doorBox.min.x) - LAYOUT.hingeX;
+        const z = (corner & 4 ? doorBox.max.z : doorBox.min.z) - LAYOUT.hingeZ;
+        const y = corner & 2 ? doorBox.max.y : doorBox.min.y;
+        const radius = Math.hypot(x, z), start = Math.atan2(z, x);
+        const end = start + MathUtils.degToRad(LAYOUT.maxDoorAngle);
+        const angles = [start, end];
+        for (let a = Math.ceil(start / (Math.PI / 2)) * Math.PI / 2; a < end; a += Math.PI / 2) angles.push(a);
+        for (const a of angles) this.assemblySweepBox.expandByPoint(new Vector3(
+          LAYOUT.hingeX + radius * Math.cos(a),
+          y,
+          LAYOUT.hingeZ + radius * Math.sin(a)
+        ));
+      }
+    }
+    _initMotionEnvelope() {
+      this.motionEnvelope = new Group();
+      this.motionEnvelope.visible = false;
+      const points = [], vertices = [];
+      const radius = 1.04, y = LAYOUT.doorBottom - 8e-3;
+      const center = new Vector3(LAYOUT.hingeX, y, LAYOUT.hingeZ);
+      for (let i = 0; i <= 80; i++) {
+        const a = MathUtils.degToRad(-5.5 + i / 80 * 111);
+        points.push(new Vector3(center.x + Math.cos(a) * radius, y, center.z + Math.sin(a) * radius));
+        if (i) vertices.push(...center.toArray(), ...points[i - 1].toArray(), ...points[i].toArray());
+      }
+      const geometry = new BufferGeometry();
+      geometry.setAttribute("position", new Float32BufferAttribute(vertices, 3));
+      this.motionEnvelope.add(new Mesh(geometry, new MeshBasicMaterial({
+        color: 4184256,
+        side: DoubleSide,
+        transparent: true,
+        opacity: 0.055,
+        depthWrite: false
+      })));
+      const outline = new BufferGeometry().setFromPoints([center, ...points, center]);
+      const line = new Line(outline, new LineDashedMaterial({
+        color: 4184256,
+        transparent: true,
+        opacity: 0.55,
+        dashSize: 0.035,
+        gapSize: 0.025
+      }));
+      line.computeLineDistances();
+      this.motionEnvelope.add(line);
+      this.scene.add(this.motionEnvelope);
     }
     _initLabels() {
       this.labelObjs = [];
@@ -32591,21 +32935,55 @@ void main() {
       this._ray.setFromCamera(this._ndc, this.camera);
       const hits = this._ray.intersectObjects(this.meshList, false);
       for (const h of hits) {
-        if (h.object.visible && h.object.userData.partId) return h.object;
+        if (this._isVisible(h.object) && h.object.userData.partId) return h.object;
       }
       return null;
     }
+    _isVisible(object) {
+      for (let p = object; p; p = p.parent) if (!p.visible) return false;
+      return true;
+    }
     /* ---------------- 公开 API ---------------- */
-    setExplode(v, animate) {
+    setExplode(v, animate = true) {
       this.explodeTarget = clamp01(v);
       if (!animate) {
         this.explode = this.explodeTarget;
         this._applyExplode(this.explode);
         this._updateLeaders();
       }
+      this._notifyDoor();
     }
     getExplode() {
       return this.explodeTarget;
+    }
+    setDoorAngle(degrees, animate = true) {
+      this.doorTarget = clampDoorAngle(degrees);
+      if (!animate || this.instantCam) {
+        this.doorAngle = this.doorTarget;
+        this._applyExplode(this.explode);
+      }
+      this._notifyDoor();
+    }
+    getDoorAngle() {
+      return this.doorTarget;
+    }
+    _notifyDoor() {
+      this.onDoorChange({
+        angle: this.doorAngle,
+        target: this.doorTarget,
+        moving: Math.abs(this.doorAngle - this.doorTarget) > 1e-3,
+        exploded: this.explode > 1e-3 || this.explodeTarget > 1e-3
+      });
+    }
+    setWiringVisible(on) {
+      this.wiringVisible = !!on;
+      this.partMap.get("wiring").group.visible = this.wiringVisible;
+      for (const l of this.labelObjs) if (l.part.def.id === "wiring") l.obj.visible = this.wiringVisible;
+      if (!on && this.selectedId === "wiring") this.select(null);
+    }
+    setMotionEnvelope(on) {
+      this.envelopeOn = !!on;
+      this.motionEnvelope.visible = this.envelopeOn && this.explode < 1e-3;
     }
     toggleAutoRotate(on) {
       this.autoRotate = on === void 0 ? !this.autoRotate : on;
@@ -32692,23 +33070,28 @@ void main() {
       this._animateCamera(endPos, sphere.center.clone(), dur);
     }
     resetView(dur = 0.9) {
-      const end = new Vector3(2.35, 2.02, 4.25);
-      this._animateCamera(end, new Vector3(0, 1.3, 0), dur);
+      this.fitCurrent(dur, new Vector3(2.35, 0.72, 4.25));
     }
     /* 按当前装配/拆解状态自动取景（精确拟合包围盒，并让开上下浮层） */
-    fitCurrent(dur = 0.75) {
+    fitCurrent(dur = 0.75, direction = null) {
       const box = new Box3().setFromObject(this.root);
+      if (this.explode < 1e-3 && this.explodeTarget < 1e-3) box.union(this.assemblySweepBox);
+      if (Math.abs(this.explodeTarget - this.explode) > 1e-3) {
+        this._applyExplode(this.explodeTarget);
+        box.union(new Box3().setFromObject(this.root));
+        this._applyExplode(this.explode);
+      }
       if (box.isEmpty()) return;
       const center = box.getCenter(new Vector3());
-      const dir = this.camera.position.clone().sub(this.controls.target);
+      const dir = direction ? direction.clone() : this.camera.position.clone().sub(this.controls.target);
       if (dir.lengthSq() < 1e-6) dir.set(2.35, 0.9, 4.25);
       dir.normalize();
       const eye0 = center.clone().add(dir);
       const rot = new Matrix4().lookAt(eye0, center, new Vector3(0, 1, 0));
       const tanY = Math.tan(MathUtils.degToRad(this.camera.fov) / 2);
-      const tanX = tanY * Math.max(0.6, this.camera.aspect);
+      const tanX = tanY * Math.max(0.1, this.camera.aspect);
       const vp = this.canvas.parentElement;
-      let topPad = 60, botPad = 116;
+      let topPad = 60, botPad = 34;
       if (vp) {
         const r0 = vp.getBoundingClientRect();
         const topEl = vp.querySelector(".vp-top");
@@ -32725,8 +33108,8 @@ void main() {
       const min = box.min, max = box.max;
       for (let i = 0; i < 8; i++) {
         p.set(i & 1 ? max.x : min.x, i & 2 ? max.y : min.y, i & 4 ? max.z : min.z);
-        p.sub(center).applyMatrix4(rot);
-        d = Math.max(d, Math.abs(p.y) / (pad * tanY) + p.z, Math.abs(p.x) / (pad * tanX) + p.z);
+        p.sub(center).applyMatrix4(rot.clone().invert());
+        d = Math.max(d, Math.abs(p.y) / (pad * tanY) + p.z, Math.abs(p.x) / (0.9 * tanX) + p.z);
       }
       d = Math.max(d, 1.4);
       const worldPerPx = 2 * d * tanY / H;
@@ -32750,7 +33133,7 @@ void main() {
         top: [0.9, 6.2, 2.4]
       };
       const p = map[name] || map.iso;
-      this._animateCamera(new Vector3(...p), t, dur);
+      this.fitCurrent(dur, new Vector3(...p).sub(t));
     }
     _animateCamera(posEnd, targetEnd, dur = 0.85) {
       if (this.instantCam || dur <= 0.02) {
@@ -32780,12 +33163,16 @@ void main() {
           );
           p.group.quaternion.copy(p.restQuat).multiply(q);
         }
+        if (p.def.id === "door") {
+          p.group.rotation.y = -MathUtils.degToRad(this.doorAngle) + (p.spin?.y || 0) * k;
+        }
       }
       for (const s of this.subs) {
         const sd = s.userData.subDelay ?? 0.35;
         const d = clamp01((t - sd) / Math.max(1e-3, 1 - sd));
         s.position.copy(s.userData.basePos).addScaledVector(s.userData.subOffset, smooth(d));
       }
+      this.motionEnvelope.visible = this.envelopeOn && t < 1e-3;
       if (this.selectedId) this._updateMarker();
     }
     /* ---------------- 标签：遮挡 + 防重叠 ---------------- */
@@ -32810,7 +33197,7 @@ void main() {
           dir.divideScalar(dist || 1);
           ray.set(cam, dir);
           ray.far = Math.max(0.01, dist - 0.015);
-          const hits = ray.intersectObjects(this.meshList, false);
+          const hits = ray.intersectObjects(this.meshList, false).filter((hit) => this._isVisible(hit.object));
           l.occ = hits.length > 0 && hits[0].object.userData.partId !== l.part.def.id;
         }
         this._resolveClashes();
@@ -32898,16 +33285,25 @@ void main() {
     _loop() {
       if (this._disposed) return;
       this._raf = requestAnimationFrame(this._loop);
+      this.clock.update();
       const dt = Math.min(this.clock.getDelta(), 0.05);
+      if (this.doorAngle !== this.doorTarget) {
+        const gap = this.doorTarget - this.doorAngle;
+        this.doorAngle = Math.abs(gap) < 0.02 ? this.doorTarget : this.doorAngle + gap * (1 - Math.exp(-dt * 5.5));
+        this._applyExplode(this.explode);
+        this._notifyDoor();
+      }
       const k = 1 - Math.exp(-dt * 13);
       if (Math.abs(this.explodeTarget - this.explode) > 4e-4) {
         this.explode += (this.explodeTarget - this.explode) * k;
         this._applyExplode(this.explode);
         this._leadersDirty = true;
+        this._notifyDoor();
       } else if (this.explode !== this.explodeTarget) {
         this.explode = this.explodeTarget;
         this._applyExplode(this.explode);
         this._leadersDirty = true;
+        this._notifyDoor();
       }
       if (this.camAnim) {
         const a = this.camAnim;
@@ -32931,8 +33327,8 @@ void main() {
       const show = op > 0.02 && this.labelsOn;
       const v = new Vector3();
       for (const L of this.leaders) {
-        L.line.visible = show;
-        if (!show) continue;
+        L.line.visible = show && this._isVisible(L.part.group);
+        if (!L.line.visible) continue;
         L.line.material.opacity = op;
         L.part.group.getWorldPosition(v);
         const pos = L.line.geometry.attributes.position;
@@ -32950,10 +33346,12 @@ void main() {
       this.camera.updateProjectionMatrix();
       this.renderer.setSize(w, h, false);
       this.labelRenderer.setSize(w, h);
+      this.fitCurrent(0.01);
     }
     dispose() {
       this._disposed = true;
       cancelAnimationFrame(this._raf);
+      this.clock.dispose();
       this.controls.dispose();
       this.renderer.dispose();
     }
@@ -33054,6 +33452,66 @@ void main() {
   function boot() {
     const canvas = $("#scene");
     const labelHost = $("#labels");
+    const doorRange = $("#doorRange");
+    const doorAngle = $("#doorAngle");
+    const doorStatus = $("#doorStatus");
+    const doorControls = $(".door-ctl");
+    const doorLoopButton = $('[data-door="loop"]');
+    const explodePlayButton = $('[data-explode="auto"]');
+    let doorState = { angle: 0, target: 0, moving: false, exploded: false };
+    let doorLooping = false;
+    let doorLoopTimer = null;
+    let explodeFrame = 0;
+    function syncDoorUI(state) {
+      doorState = state;
+      const angle = Math.min(105, Math.max(0, Number(state.angle) || 0));
+      const angleText = `${Math.round(angle)}\xB0`;
+      doorRange.value = angle;
+      doorRange.style.setProperty("--fill", `${angle / 105 * 100}%`);
+      doorAngle.textContent = angleText;
+      let status = angle < 0.1 ? "\u95E8\u5DF2\u5173\u95ED" : "\u95E8\u5DF2\u6253\u5F00";
+      if (state.moving) status = state.target > angle ? "\u95E8\u6B63\u5728\u5F00\u542F" : "\u95E8\u6B63\u5728\u5173\u95ED";
+      if (state.exploded) status = "\u62C6\u89E3\u72B6\u6001 \xB7 \u5F00\u5173\u95E8\u5C06\u6062\u590D\u88C5\u914D";
+      if (doorStatus.textContent !== status) doorStatus.textContent = status;
+      doorRange.setAttribute("aria-valuetext", `${Math.round(angle)} \u5EA6\uFF0C${status}`);
+      doorControls.classList.toggle("is-moving", state.moving);
+      doorControls.classList.toggle("is-exploded", Boolean(state.exploded));
+      if (doorLooping && !state.moving && !state.exploded && doorLoopTimer === null) {
+        doorLoopTimer = setTimeout(() => {
+          doorLoopTimer = null;
+          if (doorLooping) viewer.setDoorAngle(state.target > 52.5 ? 0 : 105);
+        }, 550);
+      }
+    }
+    function stopDoorLoop() {
+      doorLooping = false;
+      if (doorLoopTimer !== null) clearTimeout(doorLoopTimer);
+      doorLoopTimer = null;
+      doorLoopButton.textContent = "\u5F80\u8FD4\u6F14\u793A";
+      doorLoopButton.setAttribute("aria-pressed", "false");
+    }
+    function stopExplodePlayback() {
+      cancelAnimationFrame(explodeFrame);
+      explodeFrame = 0;
+      playing = false;
+      explodePlayButton.textContent = "\u81EA\u52A8\u62C6\u89E3";
+      explodePlayButton.setAttribute("aria-pressed", "false");
+    }
+    function prepareDoor() {
+      stopExplodePlayback();
+      stopDoorLoop();
+      viewer.setExplode(0, false);
+      setExplodeUI(0);
+    }
+    function moveDoor(angle, animate = true) {
+      prepareDoor();
+      viewer.setDoorAngle(angle, animate);
+    }
+    function prepareExplode() {
+      stopExplodePlayback();
+      stopDoorLoop();
+      if (doorState.moving) viewer.setDoorAngle(doorState.angle, false);
+    }
     try {
       viewer = new Viewer({
         canvas,
@@ -33061,7 +33519,8 @@ void main() {
         onSelect: (id) => {
           syncRail(id);
           renderDetail(PARTS.find((p) => p.id === id) || null);
-        }
+        },
+        onDoorChange: syncDoorUI
       });
     } catch (err) {
       console.error(err);
@@ -33077,6 +33536,37 @@ void main() {
     });
     new ResizeObserver(() => viewer.resize()).observe($("#viewport"));
     if (STATIC) viewer.instantCam = true;
+    doorRange.addEventListener("input", () => moveDoor(Number(doorRange.value), false));
+    $$("[data-door]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const action = button.dataset.door;
+        if (action === "loop") {
+          if (doorLooping) {
+            stopDoorLoop();
+            viewer.setDoorAngle(doorState.angle, false);
+            return;
+          }
+          prepareDoor();
+          doorLooping = true;
+          doorLoopButton.textContent = "\u505C\u6B62\u6F14\u793A";
+          doorLoopButton.setAttribute("aria-pressed", "true");
+          viewer.setDoorAngle(doorState.angle > 52.5 ? 0 : 105);
+          return;
+        }
+        moveDoor(action === "open" ? 105 : 0);
+      });
+    });
+    viewer.setWiringVisible(true);
+    viewer.setMotionEnvelope(false);
+    $$("[data-scene-toggle]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const visible = button.getAttribute("aria-pressed") !== "true";
+        button.setAttribute("aria-pressed", String(visible));
+        button.classList.toggle("is-on", visible);
+        if (button.dataset.sceneToggle === "wiring") viewer.setWiringVisible(visible);
+        else viewer.setMotionEnvelope(visible);
+      });
+    });
     railEl.addEventListener("click", (e) => {
       const b = e.target.closest(".pitem");
       if (!b) return;
@@ -33093,14 +33583,18 @@ void main() {
       }
     });
     explodeRange.addEventListener("input", () => {
+      prepareExplode();
       const v = Number(explodeRange.value) / 100;
       viewer.setExplode(v, false);
       setExplodeUI(v);
     });
     explodeRange.addEventListener("change", () => viewer.fitCurrent(0.6));
     const qs = new URLSearchParams(location.search);
+    if (qs.has("dbg")) window.__zhisuo = viewer;
     const qT = qs.has("t") ? Math.min(1, Math.max(0, parseFloat(qs.get("t")) || 0)) : 0;
+    const qDoor = Math.min(105, Math.max(0, parseFloat(qs.get("door")) || 0));
     const qPart = qs.get("part") && PARTS.some((p) => p.id === qs.get("part")) ? qs.get("part") : null;
+    viewer.setDoorAngle(qDoor, false);
     viewer.setExplode(qT, false);
     setExplodeUI(qT);
     if (qs.has("view")) viewer.setView(qs.get("view"), 0.01);
@@ -33113,6 +33607,7 @@ void main() {
       btn.addEventListener("click", () => {
         const raw = btn.dataset.explode;
         if (raw === "auto") return autoPlay();
+        prepareExplode();
         const v = Number(raw);
         viewer.setExplode(v);
         setExplodeUI(v);
@@ -33121,8 +33616,13 @@ void main() {
       });
     });
     function autoPlay() {
-      if (playing) return;
+      if (playing) return stopExplodePlayback();
+      prepareExplode();
       playing = true;
+      explodePlayButton.textContent = "\u505C\u6B62\u62C6\u89E3";
+      explodePlayButton.setAttribute("aria-pressed", "true");
+      viewer.setExplode(0, false);
+      setExplodeUI(0);
       const t0 = performance.now();
       const D = 4200;
       const tick = () => {
@@ -33130,13 +33630,13 @@ void main() {
         const v = easeInOut2(e);
         viewer.setExplode(v);
         setExplodeUI(v);
-        if (e < 1) requestAnimationFrame(tick);
+        if (e < 1) explodeFrame = requestAnimationFrame(tick);
         else {
-          playing = false;
+          stopExplodePlayback();
           viewer.fitCurrent(0.85);
         }
       };
-      requestAnimationFrame(tick);
+      explodeFrame = requestAnimationFrame(tick);
     }
     $$(".vbtn").forEach((btn) => {
       btn.addEventListener("click", () => {
@@ -33167,8 +33667,14 @@ void main() {
     });
     canvas.addEventListener("dblclick", () => selectPart(null));
     document.addEventListener("keydown", (e) => {
+      if (e.defaultPrevented || e.repeat || e.target.closest('input, textarea, select, [contenteditable="true"]')) return;
       if (e.key === "Escape") selectPart(null);
+      if (e.key === "d" || e.key === "D") {
+        e.preventDefault();
+        moveDoor(viewer.getDoorAngle() > 52.5 ? 0 : 105);
+      }
       if (e.key === "e" || e.key === "E") {
+        prepareExplode();
         const v = viewer.explodeTarget > 0.5 ? 0 : 1;
         viewer.setExplode(v);
         setExplodeUI(v);

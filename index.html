@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="智锁——远程控制智能锁：5 套实验台架的三维爆炸视图、部件清单与 50,000 元预算结构。">
 <title>智锁 · 远程控制智能锁 — 三维爆炸视图与预算结构</title>
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css?v=ebd9e1e3a763">
 </head>
 <body id="top">
 
@@ -42,11 +42,11 @@
   <div class="wrap">
     <div class="stage-head">
       <div>
-        <p class="kicker"><i></i>5 套实验台架 · 11 类硬件科目 · 三维装配拆解</p>
+        <p class="kicker"><i></i>5 套实验台架 · 11 类硬件科目 · 三维装配与运动</p>
         <h1>把一台门禁台架 <em>拆开</em> 给你看</h1>
       </div>
       <div class="stage-head-side">
-        <p class="lede">拖动滑块即可沿安装方向逐层分离 17 个构件；点击任意零件，右侧会显示它在预算书里的编码、数量与价格依据。</p>
+        <p class="lede">开关门查看门扇与走线的运动关系，拆解查看 17 个构件的安装位置；点击任意零件，可查看它的预算编码、数量与价格依据。</p>
         <ul class="chips">
           <li><b>17</b><span>可拆解构件</span></li>
           <li><b>11</b><span>A 类科目</span></li>
@@ -70,6 +70,7 @@
       </aside>
 
       <!-- 中：三维视口 -->
+      <div class="viewer-center">
       <div class="viewport" id="viewport">
         <canvas id="scene"></canvas>
         <div class="labels" id="labels"></div>
@@ -91,8 +92,35 @@
           </div>
         </div>
 
-        <div class="vp-bottom">
-          <div class="explode-ctl">
+        <div class="vp-hint">拖拽旋转 · 滚轮缩放 · 点击查看部件 · D 开关门</div>
+        <div class="vp-loading" id="vpLoading"><i></i>正在装配模型…</div>
+      </div>
+
+      <div class="viewer-controls">
+        <section class="door-ctl" aria-labelledby="doorControlTitle">
+          <div class="control-head">
+            <h2 id="doorControlTitle"><span class="control-dot"></span>开关门演示</h2>
+            <span class="door-status" id="doorStatus" role="status" aria-live="polite">门已关闭</span>
+          </div>
+          <div class="door-range-row">
+            <label class="ex-label" for="doorRange">关闭</label>
+            <input id="doorRange" type="range" min="0" max="105" value="0" step="1" aria-label="门扇开启角度" aria-valuetext="0 度，门已关闭">
+            <span class="ex-label">开启</span>
+            <output class="door-angle" id="doorAngle" for="doorRange">0°</output>
+          </div>
+          <div class="door-actions" role="group" aria-label="开关门操作">
+            <button type="button" data-door="open" class="is-primary">开门</button>
+            <button type="button" data-door="close">关门</button>
+            <button type="button" data-door="loop" aria-pressed="false">往返演示</button>
+          </div>
+          <div class="door-options" role="group" aria-label="运动显示选项">
+            <button type="button" class="is-on" data-scene-toggle="wiring" aria-pressed="true"><i></i>走线</button>
+            <button type="button" data-scene-toggle="envelope" aria-pressed="false"><i></i>运动包络</button>
+            <span>门扇 0–105°</span>
+          </div>
+        </section>
+        <section class="explode-ctl" aria-labelledby="explodeControlTitle">
+            <div class="control-head"><h2 id="explodeControlTitle">部件拆解</h2><span>保留当前门角度</span></div>
             <div class="explode-row">
               <span class="ex-label">装配</span>
               <input id="explodeRange" type="range" min="0" max="100" value="0" step="1" aria-label="拆解程度">
@@ -100,16 +128,13 @@
               <span class="ex-val" id="explodeVal">0%</span>
             </div>
             <div class="explode-btns">
-              <button data-explode="0">合拢</button>
+              <button data-explode="0">装配</button>
               <button data-explode="0.55">半拆</button>
               <button data-explode="1" class="is-primary">全拆解</button>
-              <button data-explode="auto" class="is-ghost">自动播放</button>
+              <button data-explode="auto" class="is-ghost" aria-pressed="false">自动拆解</button>
             </div>
-          </div>
-        </div>
-
-        <div class="vp-hint">拖拽旋转 · 滚轮缩放 · 点击零件查看预算依据</div>
-        <div class="vp-loading" id="vpLoading"><i></i>正在装配模型…</div>
+        </section>
+      </div>
       </div>
 
       <!-- 右：部件详情 -->
@@ -318,6 +343,6 @@ window.addEventListener('error', (e) => {
   document.body.dataset.err = `${e.message} @ ${s}`;
 });
 </script>
-<script src="app.js"></script>
+<script src="app.js?v=ebd9e1e3a763"></script>
 </body>
 </html>

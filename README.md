@@ -1,6 +1,9 @@
-# 智锁 · 三维爆炸视图
+# 智锁 · 三维爆炸视图与开关门演示
 
-依据《ZhiSuo_Budget_FangSong_Sixiao_Compact》预算书重建的课程项目展示站。
-Three.js 三维装配体 + 17 个可拆解构件 + A–E 预算结构。
+在线访问：https://drippy-drop.github.io/zhisuo-3d/
 
-访问：https://Drippy-drop.github.io/zhisuo-3d/
+Three.js 三维门禁台架，17 个可拆解构件，0–105° 独立开关门和往返演示，7 路固定走线、运动包络与桌面/手机视图。保留原有 A–E 五类预算及 50,000 元项目预算结构。
+
+拖动滑块或点击按钮操作；D 开关门，E 切换装配/拆解，Esc 取消选择。可通过 ?door=105 或 ?view=back 分享指定视图。
+
+几何模型属于教学示意装配体。开关门与走线已完成模型范围内的干涉检查，实际设备安装需使用加工图并验收。
